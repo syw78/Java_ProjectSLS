@@ -37,6 +37,7 @@ import model.GoodsVO;
 import model.SaleDAO;
 import model.SaleVO;
 import util.AlertMessage;
+import util.SceneLoader;
 
 public class MainController implements Initializable {
 
@@ -234,7 +235,8 @@ public class MainController implements Initializable {
 
 		try {
 
-			Parent saleAddRoot = FXMLLoader.load(getClass().getResource("/view/saleadd.fxml"));
+			Scene scene = SceneLoader.getInstance().makeSaleAddScene();
+			Parent saleAddRoot = scene.getRoot();
 			Stage saleAddStage = new Stage(StageStyle.UTILITY);
 			saleAddStage.initModality(Modality.WINDOW_MODAL);
 			saleAddStage.initOwner(btSaleAdd.getScene().getWindow());
@@ -470,7 +472,6 @@ public class MainController implements Initializable {
 
 			});
 
-			Scene scene = new Scene(saleAddRoot);
 			saleAddStage.setScene(scene);
 			saleAddStage.show();
 
@@ -556,7 +557,8 @@ public class MainController implements Initializable {
 
 		try {
 
-			Parent menuCheckRoot = FXMLLoader.load(getClass().getResource("/view/menucheck.fxml"));
+			Scene scene = SceneLoader.getInstance().makeMenuCheckScene();
+			Parent menuCheckRoot = scene.getRoot();
 			Stage dialogStage = new Stage(StageStyle.UTILITY);
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.initOwner(btMenuCheck.getScene().getWindow());
@@ -639,7 +641,8 @@ public class MainController implements Initializable {
 
 				try {
 
-					Parent menuAddRoot = FXMLLoader.load(getClass().getResource("/view/menuadd.fxml"));
+					Scene scene = SceneLoader.getInstance().makeMenuAddScene();
+					Parent menuAddRoot = scene.getRoot();
 					Stage dialMenuAddStage = new Stage(StageStyle.UTILITY);
 					dialMenuAddStage.initModality(Modality.WINDOW_MODAL);
 					dialMenuAddStage.initOwner(btMenuCheck.getScene().getWindow());
@@ -668,7 +671,6 @@ public class MainController implements Initializable {
 
 					});
 
-					Scene scene = new Scene(menuAddRoot);
 					dialMenuAddStage.setScene(scene);
 					dialMenuAddStage.setResizable(false);
 					dialMenuAddStage.show();
@@ -704,8 +706,8 @@ public class MainController implements Initializable {
 			btEdit.setOnAction(e1 -> {
 
 				try {
-
-					Parent menuEditRoot = FXMLLoader.load(getClass().getResource("/view/menuedit.fxml"));
+					Scene scene = SceneLoader.getInstance().makeMenuEditScene();
+					Parent menuEditRoot = scene.getRoot();
 					Stage dialogEditStage = new Stage(StageStyle.UTILITY);
 					dialogEditStage.initModality(Modality.WINDOW_MODAL);
 					dialogEditStage.initOwner(btMenuCheck.getScene().getWindow());
@@ -770,7 +772,6 @@ public class MainController implements Initializable {
 						}
 					}); // end of btEditBack
 
-					Scene scene = new Scene(menuEditRoot);
 					dialogEditStage.setScene(scene);
 					dialogEditStage.setResizable(false);
 					dialogEditStage.show();
@@ -835,7 +836,6 @@ public class MainController implements Initializable {
 
 			}); // end of btBack
 
-			Scene scene = new Scene(menuCheckRoot);
 			dialogStage.setScene(scene);
 			dialogStage.setResizable(false);
 			dialogStage.show();

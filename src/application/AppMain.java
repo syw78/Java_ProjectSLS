@@ -5,14 +5,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import util.SceneLoader;
 
 public class AppMain extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		
-		Parent root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));
-		Scene scene = new Scene(root);
+		Scene scene = SceneLoader.getInstance().makeLoginScene();
 		primaryStage.setResizable(false);
 		primaryStage.setTitle("LoginWindow");
 		primaryStage.setScene(scene);
