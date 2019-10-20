@@ -655,7 +655,16 @@ public class MainController implements Initializable {
 
 					goodsDVO = new GoodsDAO();
 
+<<<<<<< HEAD
 					GoodsVO insertGoods = new GoodsVO(tfAddGoods.getText(), Integer.parseInt(tfAddPrice.getText()));
+=======
+					Scene menuAddScene = SceneLoader.getInstance().makeMenuAddScene();
+					Parent menuAddRoot = menuAddScene.getRoot();
+					Stage dialMenuAddStage = new Stage(StageStyle.UTILITY);
+					dialMenuAddStage.initModality(Modality.WINDOW_MODAL);
+					dialMenuAddStage.initOwner(btMenuCheck.getScene().getWindow());
+					dialMenuAddStage.setTitle("메뉴 등록");
+>>>>>>> d07986116f848bb4a13e3385b304de484240656f
 
 					goodsDVO.insertGoodsDB(insertGoods);
 
@@ -680,7 +689,13 @@ public class MainController implements Initializable {
 
 			}
 
+<<<<<<< HEAD
 		}); // end of btAdd
+=======
+					dialMenuAddStage.setScene(menuAddScene);
+					dialMenuAddStage.setResizable(false);
+					dialMenuAddStage.show();
+>>>>>>> d07986116f848bb4a13e3385b304de484240656f
 
 		/**************************
 		 * 2019 10 월 18 일 작성자 : 심재현
@@ -742,6 +757,52 @@ public class MainController implements Initializable {
 							goodsDVO.updateOnlyPrice(selectMenuEditGoodsVO,
 									Integer.parseInt(tfEditPrice.getText()));
 
+<<<<<<< HEAD
+=======
+				try {
+					Scene menuEditScene = SceneLoader.getInstance().makeMenuEditScene();
+					Parent menuEditRoot = menuEditScene.getRoot();
+					Stage dialogEditStage = new Stage(StageStyle.UTILITY);
+					dialogEditStage.initModality(Modality.WINDOW_MODAL);
+					dialogEditStage.initOwner(btMenuCheck.getScene().getWindow());
+					dialogEditStage.setTitle("메뉴 수정");
+
+					TextField tfEditGoods = (TextField) menuEditRoot.lookup("#tfEditGoods");
+					TextField tfEditPrice = (TextField) menuEditRoot.lookup("#tfEditPrice");
+					Button btEditOk = (Button) menuEditRoot.lookup("#btEditOk");
+					Button btEditBack = (Button) menuEditRoot.lookup("#btEditBack");
+
+					editGoods = selectMenuEditGoodsVOList.get(0).getGoods();
+
+					tfEditGoods.setPromptText(editGoods);
+					tfEditGoods.setEditable(false);
+					tfEditPrice.setPromptText(String.valueOf(selectMenuEditGoodsVOList.get(0).getPrice()));
+
+					/********************************
+					 * 2019 10 월 18 일 작성자 : 심재현
+					 * 
+					 * 기능 : 수정한 내용을 업데이트 한다.
+					 * 
+					 */
+					btEditOk.setOnAction(e2 -> {
+						try {
+							goodsDVO = new GoodsDAO();
+
+							if (tfEditGoods.getPromptText().equals(null)) {
+
+								goodsDVO.updateGoods(selectMenuEditGoodsVO, tfEditGoods.getText(),
+										Integer.parseInt(tfEditPrice.getText()));
+
+							} else {
+
+								goodsDVO.updateOnlyPrice(selectMenuEditGoodsVO,
+										Integer.parseInt(tfEditPrice.getText()));
+
+							}
+						} catch (Exception e3) {
+							e3.printStackTrace();
+							AlertMessage.alertWarningDisplay(1, "오류", "수정 오류 입니다.", "다시 확인 해주세요.");
+>>>>>>> d07986116f848bb4a13e3385b304de484240656f
 						}
 					} catch (Exception e3) {
 						e3.printStackTrace();
@@ -750,6 +811,7 @@ public class MainController implements Initializable {
 
 				}); // end of btEditOk
 
+<<<<<<< HEAD
 				/********************************************
 				 * 2019 10 월 18 일 작성자 : 심재현
 				 * 
@@ -760,6 +822,11 @@ public class MainController implements Initializable {
 					try {
 						goodsVOList.removeAll(goodsVOList);
 						loadTotalGoodsDB();
+=======
+					dialogEditStage.setScene(menuEditScene);
+					dialogEditStage.setResizable(false);
+					dialogEditStage.show();
+>>>>>>> d07986116f848bb4a13e3385b304de484240656f
 
 						tableView.setItems(goodsVOList);
 
