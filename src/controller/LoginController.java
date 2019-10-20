@@ -20,6 +20,7 @@ import javafx.stage.StageStyle;
 import model.ClientDAO;
 import model.ClientVO;
 import util.AlertMessage;
+import util.SceneLoader;
 
 public class LoginController implements Initializable {
 
@@ -61,13 +62,11 @@ public class LoginController implements Initializable {
 			
 			flagCheck = true;
 			
-			Parent mainView = null;
 			Stage mainStage = null;
 
 			try {
 
-				mainView = FXMLLoader.load(getClass().getResource("/view/main.fxml"));
-				Scene scene = new Scene(mainView);
+				Scene scene = SceneLoader.getInstance().makeMainScene();
 				mainStage = new Stage();
 				mainStage.setTitle("MAIN");
 				mainStage.setScene(scene);
@@ -105,7 +104,8 @@ public class LoginController implements Initializable {
 
 		try {
 
-			Parent signUpRoot = FXMLLoader.load(getClass().getResource("/view/signup.fxml"));
+			Scene scene = SceneLoader.getInstance().makeSignUpAddScene();
+			Parent signUpRoot = scene.getRoot();
 			Stage dialogStage = new Stage(StageStyle.UTILITY);
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.initOwner(btSignUp.getScene().getWindow());
@@ -170,7 +170,6 @@ public class LoginController implements Initializable {
 
 			});
 
-			Scene scene = new Scene(signUpRoot);
 			dialogStage.setScene(scene);
 			dialogStage.setResizable(false);
 			dialogStage.show();
