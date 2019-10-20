@@ -174,7 +174,7 @@ public class MainController implements Initializable {
 
 			tableView.setItems(dateSelectList);
 
-			barChartSetting();
+			barChartSetting(dateSelectList);
 
 		} catch (Exception e1) {
 
@@ -299,8 +299,7 @@ public class MainController implements Initializable {
 					columnComents);
 
 			/*************************
-			 * 2019 10 월 18 일 작성자 : 심재현
-			 * 수정 20일 심재현
+			 * 2019 10 월 18 일 작성자 : 심재현 수정 20일 심재현
 			 * 
 			 * 기능 : 비고 텍스트필드에서 키 이벤트 메소드를 걸어 놓음
 			 * 
@@ -329,26 +328,26 @@ public class MainController implements Initializable {
 						System.out.println(price);
 						saveTotalPrice = count * price;
 						System.out.println(saveTotalPrice);
-						
+
 						tfSaleTotal.setText(String.valueOf(saveTotalPrice));
 						tfSaleTotal.setEditable(false);
 
 						if ((!tfSaleTotal.equals(null)) && (!dpSaleDate.equals(null))) {
-							
+
 							saveSaleVO = new SaleVO(dpSaleDate.getValue().toString(), saveGoodsString,
 									Integer.parseInt(tfSalePrice.getPromptText()),
 									Integer.parseInt(tfSaleCount.getText().trim()), saveTotalPrice,
 									tfSaleComents.getText());
-							
+
 							System.out.println(saveTotalPrice);
 							System.out.println(saveSaleVO.getCount());
-							
+
 							if (saleVOList.isEmpty()) {
 
 								saleVOList.add(saveSaleVO);
 
 							} else {
-								
+
 								for (int i = 0; i < saleVOList.size(); i++) {
 
 									if (saleVOList.get(i).getGoods().equals(saveSaleVO.getGoods())) {
@@ -374,7 +373,7 @@ public class MainController implements Initializable {
 									duplicateGoodsName = false;
 
 								} else {
-									
+
 									saleVOList.remove(pastSaleVO);
 									saveSaleVO.setCount(notDuplicateSaleVOCount);
 									saveSaleVO.setTotal(notDuplicateSaleVOTotal);
@@ -415,8 +414,10 @@ public class MainController implements Initializable {
 					tableView.setItems(selectSaleVOList);
 
 				} catch (Exception e3) {
+
 					AlertMessage.alertWarningDisplay(1, "매출등록", "매출 등록 실패", "매출 등록에 실패했습니다. 다시 시도해주세요.");
 					e3.printStackTrace();
+
 				}
 
 			}); // end of btSaleAdd
@@ -509,17 +510,10 @@ public class MainController implements Initializable {
 
 			if (selectSale.equals(null)) {
 
+				AlertMessage.alertWarningDisplay(1, "삭제 오류", "삭제 오류입니다.", "항목을 선택하지 않았습니다.");
+				return;
+
 			}
-
-		} catch (Exception e2) {
-
-			AlertMessage.alertWarningDisplay(1, "삭제 오류", "삭제 오류입니다.", "항목을 선택하지 않았습니다.");
-			e2.printStackTrace();
-			return;
-
-		}
-
-		try {
 
 			saleDAO = new SaleDAO();
 
@@ -544,7 +538,7 @@ public class MainController implements Initializable {
 					ObservableList<SaleVO> list2 = FXCollections.observableArrayList(searchDateSaleVO);
 					tableView.setItems(list2);
 
-					barChartSetting();
+					barChartSetting(list2);
 
 				} else {
 
@@ -948,11 +942,15 @@ public class MainController implements Initializable {
 	/************************
 	 * 
 	 * 기능 : 바 차트에 내용 표시 2019 10 월 19 일
+	 * 수정 : 2019 10 월 20 일 심재현 
+	 * 수정 내용 : 해당 ObservableList 를 받아서 차트를 보여준다.
 	 * 
 	 * 작성자 : 심재현
 	 * 
+	 * @param dateSelectList2
+	 * 
 	 */
-	private void barChartSetting() {
+	private void barChartSetting(ObservableList<SaleVO> observableList) {
 
 		ObservableList<XYChart.Data<String, Integer>> barChartList = FXCollections.observableArrayList();
 		XYChart.Series<String, Integer> series = new XYChart.Series<>();
@@ -965,11 +963,11 @@ public class MainController implements Initializable {
 
 		}
 
-		dateSelectList = dateSelectList.sorted();
+		observableList = observableList.sorted();
 
-		for (int i = 0; i < dateSelectList.size(); i++) {
+		for (int i = 0; i < observableList.size(); i++) {
 
-			barChartList.add(new XYChart.Data<String, Integer>(dateSelectList.get(i).getGoods(),
+			barChartList.add(new XYChart.Data<String, Integer>(observableList.get(i).getGoods(),
 					(Integer) (dateSelectList.get(i).getTotal())));
 
 		}
@@ -980,6 +978,8 @@ public class MainController implements Initializable {
 		series.setName(localDateStr);
 		series.setData(barChartList);
 		barChart.getData().add(series);
+
+		System.out.println(observableList.toString());
 
 	} // end of barChartSetting
 
