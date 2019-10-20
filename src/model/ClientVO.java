@@ -1,12 +1,12 @@
 package model;
 
 public class ClientVO {
-	
+
 	private String id;
 	private String password;
 	private String name;
 	private String phone;
-	
+
 	public ClientVO(String id, String password, String name, String phone) {
 		super();
 		this.id = id;
@@ -51,6 +51,5 @@ public class ClientVO {
 	public String toString() {
 		return "ClientVO [id=" + id + ", password=" + password + ", name=" + name + ", phone=" + phone + "]";
 	}
-	
-	
+
 }

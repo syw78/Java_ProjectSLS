@@ -7,7 +7,6 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -53,12 +52,12 @@ public class LoginController implements Initializable {
 	private void handlerButtonLoginAction(ActionEvent e) {
 
 		if (tfId.getText().equals("") || tfPassword.getText().equals("")) {
-			
+
 			AlertManager.getInstance().show(AlertInfo.FAIL_LOGIN, null);
 
 		} else if ((tfId.getText().equals("admin") && tfPassword.getText().equals("1234"))
 				|| (checkId(tfId.getText(), clientList) && checkPassword(tfPassword.getText(), clientList))) {
-			
+
 			Stage mainStage = null;
 
 			try {
@@ -72,7 +71,7 @@ public class LoginController implements Initializable {
 				((Stage) btLogin.getScene().getWindow()).close();
 
 				mainStage.show();
-				
+
 			} catch (Exception e1) {
 				e1.printStackTrace();
 				AlertManager.getInstance().show(AlertInfo.ERROR_LOAD_SCENE, null);
@@ -127,7 +126,7 @@ public class LoginController implements Initializable {
 
 						if (duplicateCheckId(cvo.getId(), clientList) || clientList == null) {
 							clientDVO.insertClientDB(cvo);
-							
+
 							AlertManager.getInstance().show(AlertInfo.SUCCESS_SIGNUP, buttonType -> {
 								dialogStage.close();
 							});
@@ -138,7 +137,7 @@ public class LoginController implements Initializable {
 					}
 
 				} catch (Exception e2) {
-					
+
 					e2.printStackTrace();
 					AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
 				}
@@ -156,10 +155,10 @@ public class LoginController implements Initializable {
 			dialogStage.show();
 
 		} catch (Exception e1) {
-			
+
 			e1.printStackTrace();
 			AlertManager.getInstance().show(AlertInfo.ERROR_LOAD_SCENE, null);
-			
+
 		}
 
 	} // end of handlerButtonSignUpAction
@@ -213,9 +212,9 @@ public class LoginController implements Initializable {
 		return false;
 
 	} // end of checkPassword
-	
+
 	public boolean checkId(String id, ArrayList<ClientVO> cvoList) {
-		
+
 		if (cvoList.equals(null)) {
 
 			return false;

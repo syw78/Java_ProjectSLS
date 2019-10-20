@@ -1,7 +1,6 @@
 package controller;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -16,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -23,7 +23,6 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -35,8 +34,8 @@ import model.GoodsVO;
 import model.SaleDAO;
 import model.SaleVO;
 import util.AlertManager;
-import util.SceneLoader;
 import util.AlertManager.AlertInfo;
+import util.SceneLoader;
 
 public class MainController implements Initializable {
 
@@ -289,7 +288,7 @@ public class MainController implements Initializable {
 			columnComents.setStyle("-fx-alignment: CENTER;");
 			columnComents.setCellValueFactory(new PropertyValueFactory("coments"));
 
-			if(saleVOList != null) {
+			if (saleVOList != null) {
 				saleVOList.removeAll(saleVOList);
 
 			}
@@ -300,8 +299,7 @@ public class MainController implements Initializable {
 					columnComents);
 
 			/*************************
-			 * 2019 10 월 18 일 작성자 : 심재현
-			 * 수정 20일 심재현
+			 * 2019 10 월 18 일 작성자 : 심재현 수정 20일 심재현
 			 * 
 			 * 기능 : 비고 텍스트필드에서 키 이벤트 메소드를 걸어 놓음
 			 * 
@@ -330,7 +328,7 @@ public class MainController implements Initializable {
 						System.out.println(price);
 						saveTotalPrice = count * price;
 						System.out.println(saveTotalPrice);
-						
+
 						tfSaleTotal.setText(String.valueOf(saveTotalPrice));
 						tfSaleTotal.setEditable(false);
 
@@ -340,16 +338,16 @@ public class MainController implements Initializable {
 									Integer.parseInt(tfSalePrice.getPromptText()),
 									Integer.parseInt(tfSaleCount.getText().trim()), saveTotalPrice,
 									tfSaleComents.getText());
-							
+
 							System.out.println(saveTotalPrice);
 							System.out.println(saveSaleVO.getCount());
-							
+
 							if (saleVOList.isEmpty()) {
 
 								saleVOList.add(saveSaleVO);
 
 							} else {
-								
+
 								for (int i = 0; i < saleVOList.size(); i++) {
 
 									if (saleVOList.get(i).getGoods().equals(saveSaleVO.getGoods())) {
@@ -375,7 +373,7 @@ public class MainController implements Initializable {
 									duplicateGoodsName = false;
 
 								} else {
-									
+
 									saleVOList.remove(pastSaleVO);
 									saveSaleVO.setCount(notDuplicateSaleVOCount);
 									saveSaleVO.setTotal(notDuplicateSaleVOTotal);
@@ -410,10 +408,10 @@ public class MainController implements Initializable {
 						saleDAO.insertSaleDB(saleVOList.get(i));
 
 					}
-					
+
 					AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, buttonType -> {
 						saleVOList.removeAll(saleVOList);
-						tableView.setItems(selectSaleVOList);	
+						tableView.setItems(selectSaleVOList);
 					});
 
 				} catch (Exception e3) {
@@ -443,7 +441,7 @@ public class MainController implements Initializable {
 			 * 
 			 */
 			btSaleDelete.setOnAction(e2 -> {
-				
+
 				if (selectSaleVO == null) {
 					AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
 					return;
@@ -453,16 +451,17 @@ public class MainController implements Initializable {
 
 					saleDAO = new SaleDAO();
 
-					AlertManager.getInstance().show(AlertType.CONFIRMATION, "항목 삭제", "선택한 항목을 삭제하시겠습니까?", buttonType -> {
-						if (buttonType != ButtonType.OK) {
-							return;
-						}
+					AlertManager.getInstance().show(AlertType.CONFIRMATION, "항목 삭제", "선택한 항목을 삭제하시겠습니까?",
+							buttonType -> {
+								if (buttonType != ButtonType.OK) {
+									return;
+								}
 
-						addSaleVOList.addAll(saleVOList);
-						saleVOList.remove(selectSale);
-						tableView.setItems(saleVOList);
+								addSaleVOList.addAll(saleVOList);
+								saleVOList.remove(selectSale);
+								tableView.setItems(saleVOList);
 
-					});
+							});
 
 				} catch (Exception e3) {
 					e3.printStackTrace();
@@ -512,16 +511,16 @@ public class MainController implements Initializable {
 		try {
 
 			saleDAO = new SaleDAO();
-			
+
 			AlertManager.getInstance().show(AlertType.CONFIRMATION, "항목 삭제", "선택한 항목을 삭제하시겠습니까?", buttonType -> {
 				if (buttonType != ButtonType.OK) {
 					return;
 				}
-				
+
 				int i = saleDAO.deleteSale(selectSale);
 
 				if (i == 1) {
-					
+
 					AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
 
 					// 삭제후 날짜 값은 선택했던 값 그대로를 유지 해야 하므로 현재의 값을 얻어와 다시 테이블뷰를 세팅한다.
@@ -543,7 +542,7 @@ public class MainController implements Initializable {
 				}
 
 			});
-			
+
 		} catch (Exception e2) {
 			AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
 			e2.printStackTrace();
@@ -948,7 +947,7 @@ public class MainController implements Initializable {
 		for (int i = 0; i < dateSelectList.size(); i++) {
 
 			barChartList.add(new XYChart.Data<String, Integer>(dateSelectList.get(i).getGoods(),
-					(Integer) (dateSelectList.get(i).getTotal())));
+					(dateSelectList.get(i).getTotal())));
 
 		}
 

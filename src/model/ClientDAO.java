@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import util.AlertManager;
-import util.DBUtil;
 import util.AlertManager.AlertInfo;
+import util.DBUtil;
 
 public class ClientDAO {
 
@@ -123,7 +123,7 @@ public class ClientDAO {
 
 			e.printStackTrace();
 			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-			
+
 		} finally {
 
 			try {

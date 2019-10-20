@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import util.AlertManager;
-import util.DBUtil;
 import util.AlertManager.AlertInfo;
+import util.DBUtil;
 
 public class GoodsDAO {
 
@@ -47,39 +47,39 @@ public class GoodsDAO {
 			}
 
 		}
-		
+
 	} // end of insertGoodsDB
-	
+
 	public ArrayList<GoodsVO> getGoodsTotal() {
-		
+
 		ArrayList<GoodsVO> list = new ArrayList<GoodsVO>();
-		
+
 		String dml = "select * from goodsTBL";
-		
+
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		
+
 		GoodsVO goodsVO = null;
-		
+
 		try {
-			
+
 			con = DBUtil.getConnection();
 			pstmt = con.prepareStatement(dml);
 			rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
-				
+
+			while (rs.next()) {
+
 				goodsVO = new GoodsVO(rs.getString(1), rs.getInt(2));
 				list.add(goodsVO);
-				
+
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-			
+
 		} finally {
 			try {
 				if (rs != null)
@@ -93,27 +93,27 @@ public class GoodsDAO {
 				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
-		
+
 		return list;
-		
+
 	} // end of getGoodsTotal
-	
+
 	public int deleteGoods(String goods) throws Exception {
-		
+
 		String dml = "delete from goodsTBL where goods = ?";
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		int i = 0;
-		
+
 		try {
-			
+
 			con = DBUtil.getConnection();
-			
+
 			pstmt = con.prepareStatement(dml);
 			pstmt.setString(1, goods);
-			
+
 			i = pstmt.executeUpdate();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
@@ -129,36 +129,36 @@ public class GoodsDAO {
 				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
-		
+
 		return i;
 
 	} // end of deleteGoods
-	
+
 	public void updateGoods(GoodsVO goodsVO, String goods, int price) {
-		
+
 		String dml = "update goodsTBL set goods = ?, price = ? where goods = ?";
-		
+
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		GoodsVO returnGoodsVO = null;
-		
+
 		try {
-			
+
 			con = DBUtil.getConnection();
-		
+
 			pstmt = con.prepareStatement(dml);
 			pstmt.setString(1, goods);
 			pstmt.setInt(2, price);
 			pstmt.setString(3, goodsVO.getGoods());
-			
+
 			int check = pstmt.executeUpdate();
-			
-			if(check == 1) {
+
+			if (check == 1) {
 				AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
 			} else {
 				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
@@ -171,38 +171,38 @@ public class GoodsDAO {
 			} catch (SQLException e) {
 				e.printStackTrace();
 				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-				
+
 			}
 		}
-		
+
 		return;
-		
+
 	}
-	
-public void updateOnlyPrice(GoodsVO goodsVO, int price) {
-		
+
+	public void updateOnlyPrice(GoodsVO goodsVO, int price) {
+
 		String dml = "update goodsTBL set price = ? where goods = ?";
-		
+
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		GoodsVO returnGoodsVO = null;
-		
+
 		try {
-			
+
 			con = DBUtil.getConnection();
-		
+
 			pstmt = con.prepareStatement(dml);
 			pstmt.setInt(1, price);
 			pstmt.setString(2, goodsVO.getGoods());
-			
+
 			int check = pstmt.executeUpdate();
-			
-			if(check == 1) {
+
+			if (check == 1) {
 				AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
 			} else {
 				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
@@ -218,13 +218,13 @@ public void updateOnlyPrice(GoodsVO goodsVO, int price) {
 				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
-		
+
 		return;
-		
+
 	}
-	
+
 	public ObservableList<GoodsVO> getCheckGoods(String goods) throws Exception {
-		
+
 		String dml = "select * from goodsTBL where goods like ?";
 		ObservableList<GoodsVO> list = FXCollections.observableArrayList();
 		Connection con = null;
@@ -232,14 +232,14 @@ public void updateOnlyPrice(GoodsVO goodsVO, int price) {
 		ResultSet rs = null;
 		GoodsVO returnGoods = null;
 		String likeGoods = "%" + goods + "%";
-		
+
 		try {
 			con = DBUtil.getConnection();
 			pstmt = con.prepareStatement(dml);
 			pstmt.setString(1, likeGoods);
 			rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
+
+			while (rs.next()) {
 				returnGoods = new GoodsVO(rs.getString(1), rs.getInt(2));
 				list.add(returnGoods);
 			}
@@ -261,5 +261,5 @@ public void updateOnlyPrice(GoodsVO goodsVO, int price) {
 		}
 		return list;
 	}
-	
+
 }
