@@ -1,10 +1,10 @@
 package model;
 
 public class GoodsVO {
-	
+
 	private String goods;
 	private int price;
-	
+
 	public GoodsVO(String goods, int price) {
 		super();
 		this.goods = goods;
@@ -31,5 +31,5 @@ public class GoodsVO {
 	public String toString() {
 		return "GoodsVO [goods=" + goods + ", price=" + price + "]";
 	}
-	
+
 }

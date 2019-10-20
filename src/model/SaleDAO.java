@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javafx.collections.ObservableList;
-import util.AlertMessage;
+import util.AlertManager;
+import util.AlertManager.AlertInfo;
 import util.DBUtil;
 
 public class SaleDAO {
@@ -35,7 +35,7 @@ public class SaleDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "판매 목록을 저장하는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 
 			try {
@@ -45,7 +45,7 @@ public class SaleDAO {
 					con.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 중 에러가 발생했습니다.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 
 		}
@@ -73,7 +73,7 @@ public class SaleDAO {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "전체 판매 목록을 불러오는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 			try {
 				if (rs != null)
@@ -84,7 +84,7 @@ public class SaleDAO {
 					con.close();
 			} catch (SQLException se) {
 				se.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 중 에러가 발생했습니다.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
 		return list;
@@ -110,7 +110,7 @@ public class SaleDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "판매 목록을 지우는 도중 에러입니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 			try {
 				// ⑥ 데이터베이스와의 연결에 사용되었던 오브젝트를 해제
@@ -119,80 +119,77 @@ public class SaleDAO {
 				if (con != null)
 					con.close();
 			} catch (SQLException e) {
-				 e.printStackTrace();
-				 AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 에러입니다.");
+				e.printStackTrace();
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
 
 		return i;
 
 	} // end of deleteGoods
-	
+
 	public ArrayList<SaleVO> getListToDate(String date) {
-		
+
 		String dml = "select date, goods, price, count, total, coments from saleTBL where date = ?";
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		SaleVO saleVO = null;
 		ArrayList<SaleVO> list = new ArrayList<SaleVO>();
-		
+
 		try {
-			
+
 			con = DBUtil.getConnection();
-			
+
 			pstmt = con.prepareStatement(dml);
 			pstmt.setString(1, date);
 			rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
-				
-				saleVO = new SaleVO(rs.getString(1), rs.getString(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), 
+
+			while (rs.next()) {
+
+				saleVO = new SaleVO(rs.getString(1), rs.getString(2), rs.getInt(3), rs.getInt(4), rs.getInt(5),
 						rs.getString(6));
-				
+
 				list.add(saleVO);
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "날짜로 목록을 검색하는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		}
-		
-		
+
 		return list;
 	}
-	
+
 	public ArrayList<SaleVO> searchGoodsVO(String goods, String date) {
-		
+
 		String dml = "select * from saleTBL where goods like ? and date = ?";
-		
+
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String likeGoods = "%" + goods + "%";
 		SaleVO saleVO = null;
 		ArrayList<SaleVO> list = new ArrayList<SaleVO>();
-		
+
 		try {
 			con = DBUtil.getConnection();
 			pstmt = con.prepareStatement(dml);
 			pstmt.setString(1, likeGoods);
 			pstmt.setString(2, date);
 			rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
-				saleVO = new SaleVO(rs.getString(2), rs.getString(3), rs.getInt(4), 
-						rs.getInt(5), rs.getInt(6), rs.getString(7));
+
+			while (rs.next()) {
+				saleVO = new SaleVO(rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(6),
+						rs.getString(7));
 				list.add(saleVO);
 			}
 			System.out.println(list.toString());
 		} catch (Exception e) {
-			AlertMessage.alertWarningDisplay(1, "에러", "에러입니다.", "전체 품목을 불러오는 도중 에러입니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			e.printStackTrace();
 		}
 		return list;
 	}
-	
-	
 
 }

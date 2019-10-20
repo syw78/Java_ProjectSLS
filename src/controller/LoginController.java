@@ -7,7 +7,6 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,7 +18,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.ClientDAO;
 import model.ClientVO;
-import util.AlertMessage;
+import util.AlertManager;
+import util.AlertManager.AlertInfo;
 import util.SceneLoader;
 
 public class LoginController implements Initializable {
@@ -37,7 +37,6 @@ public class LoginController implements Initializable {
 
 	private ClientDAO clientDVO;
 	private ArrayList<ClientVO> clientList = new ArrayList<ClientVO>();
-	private boolean flagCheck = true;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -54,14 +53,11 @@ public class LoginController implements Initializable {
 
 		if (tfId.getText().equals("") || tfPassword.getText().equals("")) {
 
-			AlertMessage.alertWarningDisplay(1, "Login Error", "try again Id or Password",
-					"wrong input Id or Password");
+			AlertManager.getInstance().show(AlertInfo.FAIL_LOGIN, null);
 
 		} else if ((tfId.getText().equals("admin") && tfPassword.getText().equals("1234"))
 				|| (checkId(tfId.getText(), clientList) && checkPassword(tfPassword.getText(), clientList))) {
-			
-			flagCheck = true;
-			
+
 			Stage mainStage = null;
 
 			try {
@@ -75,21 +71,14 @@ public class LoginController implements Initializable {
 				((Stage) btLogin.getScene().getWindow()).close();
 
 				mainStage.show();
-				
+
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "메인 화면을 불러오는 도중 에러가 발생했습니다.");
-				
-				flagCheck = true;
-				
+				AlertManager.getInstance().show(AlertInfo.ERROR_LOAD_SCENE, null);
 			}
 
 		} else {
-
-			AlertMessage.alertWarningDisplay(1, "오류", "오류 입니다.", "맞지 않는 아이디, 또는 비밀번호를 입력하였습니다.");
-			
-			flagCheck = true;
-
+			AlertManager.getInstance().show(AlertInfo.FAIL_LOGIN, null);
 		}
 
 	} // end of handlerButtonLoginAction
@@ -124,7 +113,7 @@ public class LoginController implements Initializable {
 
 					if (tfDialogId.getText().equals("") || tfDialogPassword.getText().equals("")
 							|| tfDialogName.getText().equals("") || tfDialogPhone.getText().equals("")) {
-						throw new Exception();
+						AlertManager.getInstance().show(AlertInfo.FAIL_SIGNUP_INCOMPLETE_FORM, null);
 
 					} else {
 
@@ -136,30 +125,21 @@ public class LoginController implements Initializable {
 						clientList = clientDVO.getClientCheck(cvo);
 
 						if (duplicateCheckId(cvo.getId(), clientList) || clientList == null) {
-
-							flagCheck = true;
-								
 							clientDVO.insertClientDB(cvo);
 
-							AlertMessage.alertWarningDisplay(1, "회원 가입 성공", "회원 가입 성공", "회원 가입에 성공하였습니다.");
-							dialogStage.close();
-
+							AlertManager.getInstance().show(AlertInfo.SUCCESS_SIGNUP, buttonType -> {
+								dialogStage.close();
+							});
 						} else {
-
-							AlertMessage.alertWarningDisplay(1, "아이디 중복", "아이디 중복 입니다.", "이미 사용중인 아이디 입니다.");
-							flagCheck = true;
-
+							AlertManager.getInstance().show(AlertInfo.FAIL_SIGNUP_DUPLICATE_ID, null);
 						}
 
 					}
 
 				} catch (Exception e2) {
-					
-					e2.printStackTrace();
-					AlertMessage.alertWarningDisplay(1, "오류", "오류 입니다.", "다시 확인 해 주세요.");
-					
-					flagCheck = true;
 
+					e2.printStackTrace();
+					AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
 				}
 
 			});
@@ -175,10 +155,10 @@ public class LoginController implements Initializable {
 			dialogStage.show();
 
 		} catch (Exception e1) {
-			
+
 			e1.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "화면을 불러오는 도중 에러가 발생했습니다.");
-			
+			AlertManager.getInstance().show(AlertInfo.ERROR_LOAD_SCENE, null);
+
 		}
 
 	} // end of handlerButtonSignUpAction
@@ -204,19 +184,12 @@ public class LoginController implements Initializable {
 		for (int i = 0; i < cvoList.size(); i++) {
 
 			if (cvoList.get(i).getId().equals(id)) {
-
-				flagCheck = false;
-				break;
-
-			} else {
-
-				flagCheck = true;
-
+				return false;
 			}
 
 		}
 
-		return flagCheck;
+		return true;
 
 	} // end of duplicateCheckId
 
@@ -231,24 +204,17 @@ public class LoginController implements Initializable {
 		for (int i = 0; i < cvoList.size(); i++) {
 
 			if (cvoList.get(i).getPassword().equals(password)) {
-
-				flagCheck = true;
-				break;
-				
-			} else {
-
-				flagCheck = false;
-
+				return true;
 			}
 
 		}
 
-		return flagCheck;
+		return false;
 
 	} // end of checkPassword
-	
+
 	public boolean checkId(String id, ArrayList<ClientVO> cvoList) {
-		
+
 		if (cvoList.equals(null)) {
 
 			return false;
@@ -258,20 +224,10 @@ public class LoginController implements Initializable {
 		for (int i = 0; i < cvoList.size(); i++) {
 
 			if (cvoList.get(i).getId().equals(id)) {
-
-				flagCheck = true;
-				break;
-				
-			} else {
-
-				flagCheck = false;
-
+				return true;
 			}
 
 		}
-
-		return flagCheck;
-		
+		return false;
 	}
-
 }

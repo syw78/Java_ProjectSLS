@@ -1,16 +1,16 @@
 package model;
 
 public class SaleVO {
-	
+
 	private String date;
 	private String goods;
 	private int price;
 	private int count;
 	private int total;
 	private String coments;
-	
+
 	public SaleVO() {
-		
+
 	}
 
 	public SaleVO(String date, String goods, int price, int count, int total, String coments) {
@@ -76,7 +76,5 @@ public class SaleVO {
 		return "SaleVO [date=" + date + ", goods=" + goods + ", price=" + price + ", count=" + count + ", total="
 				+ total + ", coments=" + coments + "]";
 	}
-	
-	
-	
+
 }
