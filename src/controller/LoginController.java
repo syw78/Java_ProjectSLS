@@ -1,6 +1,8 @@
 package controller;
 
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -49,7 +51,7 @@ public class LoginController implements Initializable {
 
 	} // end of initialize
 
-	private void handlerButtonLoginAction(ActionEvent e) {
+	private void handlerButtonLoginAction(ActionEvent event) {
 
 		if (tfId.getText().equals("") || tfPassword.getText().equals("")) {
 
@@ -72,8 +74,7 @@ public class LoginController implements Initializable {
 
 				mainStage.show();
 
-			} catch (Exception e1) {
-				e1.printStackTrace();
+			} catch (IOException e) {
 				AlertManager.getInstance().show(AlertInfo.ERROR_LOAD_SCENE, null);
 			}
 
@@ -89,10 +90,9 @@ public class LoginController implements Initializable {
 
 	} // end of handlerButtonCancleAction
 
-	private void handlerButtonSignUpAction(ActionEvent e) {
-
+	private void handlerButtonSignUpAction(ActionEvent event) {
+		
 		try {
-
 			Scene scene = SceneLoader.getInstance().makeSignUpAddScene();
 			Parent signUpRoot = scene.getRoot();
 			Stage dialogStage = new Stage(StageStyle.UTILITY);
@@ -126,7 +126,6 @@ public class LoginController implements Initializable {
 
 						if (duplicateCheckId(cvo.getId(), clientList) || clientList == null) {
 							clientDVO.insertClientDB(cvo);
-
 							AlertManager.getInstance().show(AlertInfo.SUCCESS_SIGNUP, buttonType -> {
 								dialogStage.close();
 							});
@@ -136,10 +135,9 @@ public class LoginController implements Initializable {
 
 					}
 
-				} catch (Exception e2) {
-
-					e2.printStackTrace();
-					AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
+				} catch (SQLException sqle) {
+					sqle.printStackTrace();
+					AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 				}
 
 			});
@@ -153,12 +151,10 @@ public class LoginController implements Initializable {
 			dialogStage.setScene(scene);
 			dialogStage.setResizable(false);
 			dialogStage.show();
-
-		} catch (Exception e1) {
-
-			e1.printStackTrace();
+			
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 			AlertManager.getInstance().show(AlertInfo.ERROR_LOAD_SCENE, null);
-
 		}
 
 	} // end of handlerButtonSignUpAction
@@ -169,7 +165,12 @@ public class LoginController implements Initializable {
 
 		clientDVO = new ClientDAO();
 
-		clientList = clientDVO.getClientInfo();
+		try {
+			clientList = clientDVO.getClientInfo();	
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
+		}
 
 	} // end of initSetting
 

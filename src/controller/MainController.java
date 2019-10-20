@@ -1,6 +1,8 @@
 package controller;
 
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -151,10 +153,9 @@ public class MainController implements Initializable {
 			saleVOList = FXCollections.observableArrayList(list);
 			tableView.setItems(saleVOList);
 
-		} catch (Exception e1) {
-
-			e1.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		}
 	}
 
@@ -183,10 +184,9 @@ public class MainController implements Initializable {
 
 			barChartSetting(dateSelectList);
 
-		} catch (Exception e1) {
-
-			e1.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 
 		}
 	} // end of handlerDatePicker
@@ -420,9 +420,9 @@ public class MainController implements Initializable {
 						tableView.setItems(selectSaleVOList);
 					});
 
-				} catch (Exception e3) {
-					e3.printStackTrace();
-					AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
+				} catch (SQLException sqle) {
+					sqle.printStackTrace();
+					AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 				}
 
 			}); // end of btSaleAdd
@@ -453,26 +453,19 @@ public class MainController implements Initializable {
 					return;
 				}
 
-				try {
+				saleDAO = new SaleDAO();
 
-					saleDAO = new SaleDAO();
+				AlertManager.getInstance().show(AlertType.CONFIRMATION, "항목 삭제", "선택한 항목을 삭제하시겠습니까?",
+						buttonType -> {
+							if (buttonType != ButtonType.OK) {
+								return;
+							}
 
-					AlertManager.getInstance().show(AlertType.CONFIRMATION, "항목 삭제", "선택한 항목을 삭제하시겠습니까?",
-							buttonType -> {
-								if (buttonType != ButtonType.OK) {
-									return;
-								}
+							addSaleVOList.addAll(saleVOList);
+							saleVOList.remove(selectSale);
+							tableView.setItems(saleVOList);
 
-								addSaleVOList.addAll(saleVOList);
-								saleVOList.remove(selectSale);
-								tableView.setItems(saleVOList);
-
-							});
-
-				} catch (Exception e3) {
-					e3.printStackTrace();
-					AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
-				}
+						});
 
 			}); // end of btSaleDelete
 
@@ -494,12 +487,13 @@ public class MainController implements Initializable {
 			saleAddStage.setScene(scene);
 			saleAddStage.show();
 
-		} catch (Exception e2) {
-
-			e2.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
-
-		} // end of handlerButtonSaleAddAction
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+			AlertManager.getInstance().show(AlertInfo.ERROR_LOAD_SCENE, null);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
+		}
 
 	} // end of handlerButtonSaleAddAction
 
@@ -523,28 +517,31 @@ public class MainController implements Initializable {
 				return;
 			}
 
-			int i = saleDAO.deleteSale(selectSale);
+			try {
+				boolean deleted = saleDAO.deleteSale(selectSale);
 
-			if (i == 1) {
+				if (deleted) {
+					AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
 
-				AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
+					AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
 
-				// 삭제후 날짜 값은 선택했던 값 그대로를 유지 해야 하므로 현재의 값을 얻어와 다시 테이블뷰를 세팅한다.
-				localDate = datePicker.getValue();
-				String localDateStr = localDate.getYear() + "-" + localDate.getMonthValue() + "-"
-						+ localDate.getDayOfMonth();
+					// 삭제후 날짜 값은 선택했던 값 그대로를 유지 해야 하므로 현재의 값을 얻어와 다시 테이블뷰를 세팅한다.
+					localDate = datePicker.getValue();
+					String localDateStr = localDate.getYear() + "-" + localDate.getMonthValue() + "-"
+							+ localDate.getDayOfMonth();
 
-				saleDAO = new SaleDAO();
-				searchDateSaleVO = saleDAO.getListToDate(localDateStr);
-				saleVOList.removeAll(saleVOList);
-				ObservableList<SaleVO> list2 = FXCollections.observableArrayList(searchDateSaleVO);
-				tableView.setItems(list2);
+					saleDAO = new SaleDAO();
+					searchDateSaleVO = saleDAO.getListToDate(localDateStr);
+					saleVOList.removeAll(saleVOList);
+					ObservableList<SaleVO> list2 = FXCollections.observableArrayList(searchDateSaleVO);
+					tableView.setItems(list2);
 
-				barChartSetting(list2);
+					barChartSetting(list2);
 
-			} else {
-				AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
-
+				}
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 
 		});
@@ -558,276 +555,280 @@ public class MainController implements Initializable {
 	 * 
 	 */
 	private void handlerButtonMenuCheck(ActionEvent e) {
+		try {
+			Scene scene = SceneLoader.getInstance().makeMenuCheckScene();
+			Parent menuCheckRoot = scene.getRoot();
+			Stage dialogStage = new Stage(StageStyle.UTILITY);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.initOwner(btMenuCheck.getScene().getWindow());
+			dialogStage.setTitle("수정");
 
-		Scene scene = SceneLoader.getInstance().makeMenuCheckScene();
-		Parent menuCheckRoot = scene.getRoot();
-		Stage dialogStage = new Stage(StageStyle.UTILITY);
-		dialogStage.initModality(Modality.WINDOW_MODAL);
-		dialogStage.initOwner(btMenuCheck.getScene().getWindow());
-		dialogStage.setTitle("수정");
+			TableView<GoodsVO> tableView = (TableView<GoodsVO>) menuCheckRoot.lookup("#tableView");
+			TextField tfGoods = (TextField) menuCheckRoot.lookup("#tfGoods");
+			Button btSearch = (Button) menuCheckRoot.lookup("#btSearch");
+			Button btMenuRefresh = (Button) menuCheckRoot.lookup("#btMenuRefresh");
+			Button btAdd = (Button) menuCheckRoot.lookup("#btAdd");
+			Button btEdit = (Button) menuCheckRoot.lookup("#btEdit");
+			Button btEditDelete = (Button) menuCheckRoot.lookup("#btEditDelete");
+			Button btBack = (Button) menuCheckRoot.lookup("#btBack");
 
-		TableView<GoodsVO> tableView = (TableView<GoodsVO>) menuCheckRoot.lookup("#tableView");
-		TextField tfGoods = (TextField) menuCheckRoot.lookup("#tfGoods");
-		Button btSearch = (Button) menuCheckRoot.lookup("#btSearch");
-		Button btMenuRefresh = (Button) menuCheckRoot.lookup("#btMenuRefresh");
-		Button btAdd = (Button) menuCheckRoot.lookup("#btAdd");
-		Button btEdit = (Button) menuCheckRoot.lookup("#btEdit");
-		Button btEditDelete = (Button) menuCheckRoot.lookup("#btEditDelete");
-		Button btBack = (Button) menuCheckRoot.lookup("#btBack");
+			tableView.setEditable(false);
 
-		tableView.setEditable(false);
+			TableColumn columnGoods = new TableColumn("물품");
+			columnGoods.setMaxWidth(100);
+			columnGoods.setStyle("-fx-alignment: CENTER;");
+			columnGoods.setCellValueFactory(new PropertyValueFactory("goods"));
 
-		TableColumn columnGoods = new TableColumn("물품");
-		columnGoods.setMaxWidth(100);
-		columnGoods.setStyle("-fx-alignment: CENTER;");
-		columnGoods.setCellValueFactory(new PropertyValueFactory("goods"));
-
-		TableColumn columnPrice = new TableColumn("가격");
-		columnPrice.setMaxWidth(100);
-		columnPrice.setStyle("-fx-alignment: CENTER;");
-		columnPrice.setCellValueFactory(new PropertyValueFactory("price"));
-
-		goodsVOList.removeAll(goodsVOList);
-		loadTotalGoodsDB();
-
-		tableView.setItems(goodsVOList);
-		tableView.getColumns().addAll(columnGoods, columnPrice);
-
-		/*******************
-		 * 기능 : 검색버튼 2019 10 월 18 일
-		 * 
-		 * 작성자 : 심재현
-		 */
-		btSearch.setOnAction(e1 -> {
-
-			ObservableList<GoodsVO> list = FXCollections.observableArrayList();
-			goodsDVO = new GoodsDAO();
-
-			try {
-
-				list = goodsDVO.getCheckGoods(tfGoods.getText());
-				tableView.setItems(list);
-
-			} catch (Exception e2) {
-				AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
-				e2.printStackTrace();
-
-			}
-
-		}); // end of btSearch
-
-		/**********************
-		 * 기능 : 테이블뷰 새로 고침 버튼 2019 10 월 18 일
-		 * 
-		 * 작성자 : 심재현
-		 */
-		btMenuRefresh.setOnAction(e1 -> {
+			TableColumn columnPrice = new TableColumn("가격");
+			columnPrice.setMaxWidth(100);
+			columnPrice.setStyle("-fx-alignment: CENTER;");
+			columnPrice.setCellValueFactory(new PropertyValueFactory("price"));
 
 			goodsVOList.removeAll(goodsVOList);
 			loadTotalGoodsDB();
 
 			tableView.setItems(goodsVOList);
+			tableView.getColumns().addAll(columnGoods, columnPrice);
 
-		});
+			/*******************
+			 * 2019 10 월 18 일 작성자 : 심재현
+			 * 
+			 * 기능 : 검색버튼
+			 * 
+			 */
+			btSearch.setOnAction(e1 -> {
 
-		/******************************
-		 * 기능 : 메뉴를 등록한다. 2019 10 월 18 일
-		 * 
-		 * 작성자 : 심재현
-		 */
-		btAdd.setOnAction(e1 -> {
+				ObservableList<GoodsVO> list = FXCollections.observableArrayList();
+				goodsDVO = new GoodsDAO();
 
-			try {
+				try {
 
-				Scene addMenuScene = SceneLoader.getInstance().makeMenuAddScene();
-				Parent menuAddRoot = addMenuScene.getRoot();
-				Stage dialMenuAddStage = new Stage(StageStyle.UTILITY);
-				dialMenuAddStage.initModality(Modality.WINDOW_MODAL);
-				dialMenuAddStage.initOwner(btMenuCheck.getScene().getWindow());
-				dialMenuAddStage.setTitle("메뉴 등록");
+					list = goodsDVO.getCheckGoods(tfGoods.getText());
+					tableView.setItems(list);
 
-				TextField tfAddGoods = (TextField) menuAddRoot.lookup("#tfAddGoods");
-				TextField tfAddPrice = (TextField) menuAddRoot.lookup("#tfAddPrice");
-				Button btAddGoods = (Button) menuAddRoot.lookup("#btAddGoods");
-				Button btAddCancle = (Button) menuAddRoot.lookup("#btAddCancle");
+				} catch (SQLException sqle) {
+					sqle.printStackTrace();
+					AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
+				}
 
-				btAddGoods.setOnAction(e3 -> {
+			}); // end of btSearch
 
-					goodsDVO = new GoodsDAO();
+			/**********************
+			 * 2019 10 월 18 일 작성자 : 심재현
+			 * 
+			 * 기능 : 테이블뷰 새로 고침 버튼
+			 * 
+			 */
+			btMenuRefresh.setOnAction(e1 -> {
 
-					GoodsVO insertGoods = new GoodsVO(tfAddGoods.getText(), Integer.parseInt(tfAddPrice.getText()));
+				goodsVOList.removeAll(goodsVOList);
+				loadTotalGoodsDB();
 
-					goodsDVO.insertGoodsDB(insertGoods);
+				tableView.setItems(goodsVOList);
 
-					AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
+			});
 
-				});
+			/******************************
+			 * 2019 10 월 18 일 작성자 : 심재현
+			 * 
+			 * 기능 : 메뉴를 등록한다.
+			 * 
+			 */
+			btAdd.setOnAction(e1 -> {
 
-				btAddCancle.setOnAction(e3 -> {
+				try {
 
-					dialMenuAddStage.close();
+					Scene addMenuScene = SceneLoader.getInstance().makeMenuAddScene();
+					Parent menuAddRoot = addMenuScene.getRoot();
+					Stage dialMenuAddStage = new Stage(StageStyle.UTILITY);
+					dialMenuAddStage.initModality(Modality.WINDOW_MODAL);
+					dialMenuAddStage.initOwner(btMenuCheck.getScene().getWindow());
+					dialMenuAddStage.setTitle("메뉴 등록");
 
-				});
+					TextField tfAddGoods = (TextField) menuAddRoot.lookup("#tfAddGoods");
+					TextField tfAddPrice = (TextField) menuAddRoot.lookup("#tfAddPrice");
+					Button btAddGoods = (Button) menuAddRoot.lookup("#btAddGoods");
+					Button btAddCancle = (Button) menuAddRoot.lookup("#btAddCancle");
 
-				dialMenuAddStage.setScene(addMenuScene);
-				dialMenuAddStage.setResizable(false);
-				dialMenuAddStage.show();
+					btAddGoods.setOnAction(e3 -> {
 
-			} catch (Exception e2) {
-				AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
-				e2.printStackTrace();
-
-			}
-
-		}); // end of btAdd
-
-		/**************************
-		 * 2019 10 월 18 일 작성자 : 심재현
-		 * 
-		 * 기능 : 테이블뷰 선택 시 정보를 저장한다.
-		 * 
-		 */
-		tableView.setOnMousePressed(e1 -> {
-
-			selectMenuEditGoodsVO = tableView.getSelectionModel().getSelectedItem();
-			selectMenuEditGoodsVOList = tableView.getSelectionModel().getSelectedItems();
-
-		}); // end of tableView select
-
-		/************************************
-		 * 2019 10 월 18일 작성자 : 심재현
-		 * 
-		 * 기능 : 테이블 뷰에서 선택된 항목을 수정하는 창을 보여준다.
-		 * 
-		 */
-		btEdit.setOnAction(e1 -> {
-
-			try {
-				Scene editMenuScene = SceneLoader.getInstance().makeMenuEditScene();
-				Parent menuEditRoot = editMenuScene.getRoot();
-				Stage dialogEditStage = new Stage(StageStyle.UTILITY);
-				dialogEditStage.initModality(Modality.WINDOW_MODAL);
-				dialogEditStage.initOwner(btMenuCheck.getScene().getWindow());
-				dialogEditStage.setTitle("메뉴 수정");
-
-				TextField tfEditGoods = (TextField) menuEditRoot.lookup("#tfEditGoods");
-				TextField tfEditPrice = (TextField) menuEditRoot.lookup("#tfEditPrice");
-				Button btEditOk = (Button) menuEditRoot.lookup("#btEditOk");
-				Button btEditBack = (Button) menuEditRoot.lookup("#btEditBack");
-
-				editGoods = selectMenuEditGoodsVOList.get(0).getGoods();
-
-				tfEditGoods.setPromptText(editGoods);
-				tfEditGoods.setEditable(false);
-				tfEditPrice.setPromptText(String.valueOf(selectMenuEditGoodsVOList.get(0).getPrice()));
-
-				/********************************
-				 * 2019 10 월 18 일 작성자 : 심재현
-				 * 
-				 * 기능 : 수정한 내용을 업데이트 한다.
-				 * 
-				 */
-				btEditOk.setOnAction(e2 -> {
-					try {
 						goodsDVO = new GoodsDAO();
 
-						if (tfEditGoods.getPromptText() == null) {
-
-							goodsDVO.updateGoods(selectMenuEditGoodsVO, tfEditGoods.getText(),
-									Integer.parseInt(tfEditPrice.getText()));
-
-						} else {
-
-							goodsDVO.updateOnlyPrice(selectMenuEditGoodsVO, Integer.parseInt(tfEditPrice.getText()));
-
+						GoodsVO insertGoods = new GoodsVO(tfAddGoods.getText(), Integer.parseInt(tfAddPrice.getText()));
+						try {
+							goodsDVO.insertGoodsDB(insertGoods);
+							AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
+						} catch (SQLException sqle) {
+							sqle.printStackTrace();
+							AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 						}
-					} catch (Exception e3) {
-						e3.printStackTrace();
-						AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
-					}
+					});
 
-				}); // end of btEditOk
+					btAddCancle.setOnAction(e3 -> {
 
-				/********************************************
-				 * 2019 10 월 18 일 작성자 : 심재현
-				 * 
-				 * 기능 : 수정 창을 닫는다.
-				 * 
-				 */
-				btEditBack.setOnAction(e2 -> {
-					try {
+						dialMenuAddStage.close();
+
+					});
+
+					dialMenuAddStage.setScene(addMenuScene);
+					dialMenuAddStage.setResizable(false);
+					dialMenuAddStage.show();
+
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+					AlertManager.getInstance().show(AlertInfo.ERROR_LOAD_SCENE, null);
+				} 
+
+			}); // end of btAdd
+
+			/**************************
+			 * 2019 10 월 18 일 작성자 : 심재현
+			 * 
+			 * 기능 : 테이블뷰 선택 시 정보를 저장한다.
+			 * 
+			 */
+			tableView.setOnMousePressed(e1 -> {
+
+				selectMenuEditGoodsVO = tableView.getSelectionModel().getSelectedItem();
+				selectMenuEditGoodsVOList = tableView.getSelectionModel().getSelectedItems();
+
+			}); // end of tableView select
+
+			/************************************
+			 * 2019 10 월 18일 작성자 : 심재현
+			 * 
+			 * 기능 : 테이블 뷰에서 선택된 항목을 수정하는 창을 보여준다.
+			 * 
+			 */
+			btEdit.setOnAction(e1 -> {
+
+				try {
+					Scene editMenuScene = SceneLoader.getInstance().makeMenuEditScene();
+					Parent menuEditRoot = editMenuScene.getRoot();
+					Stage dialogEditStage = new Stage(StageStyle.UTILITY);
+					dialogEditStage.initModality(Modality.WINDOW_MODAL);
+					dialogEditStage.initOwner(btMenuCheck.getScene().getWindow());
+					dialogEditStage.setTitle("메뉴 수정");
+
+					TextField tfEditGoods = (TextField) menuEditRoot.lookup("#tfEditGoods");
+					TextField tfEditPrice = (TextField) menuEditRoot.lookup("#tfEditPrice");
+					Button btEditOk = (Button) menuEditRoot.lookup("#btEditOk");
+					Button btEditBack = (Button) menuEditRoot.lookup("#btEditBack");
+
+					editGoods = selectMenuEditGoodsVOList.get(0).getGoods();
+
+					tfEditGoods.setPromptText(editGoods);
+					tfEditGoods.setEditable(false);
+					tfEditPrice.setPromptText(String.valueOf(selectMenuEditGoodsVOList.get(0).getPrice()));
+
+					/********************************
+					 * 2019 10 월 18 일 작성자 : 심재현
+					 * 
+					 * 기능 : 수정한 내용을 업데이트 한다.
+					 * 
+					 */
+					btEditOk.setOnAction(e2 -> {
+						try {
+							goodsDVO = new GoodsDAO();
+
+							if (tfEditGoods.getPromptText() == null) {
+
+								boolean updated = goodsDVO.updateGoods(selectMenuEditGoodsVO, tfEditGoods.getText(),
+										Integer.parseInt(tfEditPrice.getText()));
+
+								if (updated) {
+									AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
+								} else {
+									AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
+								}
+
+							} else {
+
+								goodsDVO.updateOnlyPrice(selectMenuEditGoodsVO, Integer.parseInt(tfEditPrice.getText()));
+
+							}
+						} catch (SQLException sqle) {
+							sqle.printStackTrace();
+							AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
+						}
+
+					}); // end of btEditOk
+
+					/********************************************
+					 * 2019 10 월 18 일 작성자 : 심재현
+					 * 
+					 * 기능 : 수정 창을 닫는다.
+					 * 
+					 */
+					btEditBack.setOnAction(e2 -> {
 						goodsVOList.removeAll(goodsVOList);
 						loadTotalGoodsDB();
 
 						tableView.setItems(goodsVOList);
 
 						dialogEditStage.close();
-					} catch (Exception e3) {
-						e3.printStackTrace();
-						AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
-					}
-				}); // end of btEditBack
+					}); // end of btEditBack
 
-				dialogEditStage.setScene(editMenuScene);
-				dialogEditStage.setResizable(false);
-				dialogEditStage.show();
+					dialogEditStage.setScene(editMenuScene);
+					dialogEditStage.setResizable(false);
+					dialogEditStage.show();
 
-			} catch (Exception e3) {
-
-				AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
-				e3.printStackTrace();
-
-			}
-
-		}); // end of btEdit
-
-		/***********************
-		 * 2019 10 월 18 일 작성자 : 심재현
-		 * 
-		 * 기능 : 테이블 뷰에서 선택 된 항목을 테이블 뷰에서 삭제한다.
-		 * 
-		 */
-		btEditDelete.setOnAction(e1 -> {
-
-			goodsDVO = new GoodsDAO();
-
-			AlertManager.getInstance().show(AlertType.CONFIRMATION, "항목 삭제", "선택한 항목을 삭제하시겠습니까?", buttonType -> {
-				if (buttonType != ButtonType.OK) {
-					return;
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+					AlertManager.getInstance().show(AlertInfo.ERROR_LOAD_SCENE, null);
 				}
 
-				try {
-					int i = goodsDVO.deleteGoods(selectMenuEditGoodsVO.getGoods());
-					System.out.println(selectMenuEditGoodsVO.getGoods());
-					if (i == 1) {
-						AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
+			}); // end of btEdit
 
-					} else {
-						AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
+			/***********************
+			 * 2019 10 월 18 일 작성자 : 심재현
+			 * 
+			 * 기능 : 테이블 뷰에서 선택 된 항목을 테이블 뷰에서 삭제한다.
+			 * 
+			 */
+			btEditDelete.setOnAction(e1 -> {
+
+				goodsDVO = new GoodsDAO();
+
+				AlertManager.getInstance().show(AlertType.CONFIRMATION, "항목 삭제", "선택한 항목을 삭제하시겠습니까?", buttonType -> {
+					if (buttonType != ButtonType.OK) {
+						return;
 					}
 
-				} catch (Exception e2) {
-					AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
-					e2.printStackTrace();
-				}
-			});
-		}); // end of btEditDelete
-		/*****************
-		 * 2019 10 월 18 일 작성자 : 심재현
-		 * 
-		 * 기능 : 메뉴 확인 창을 닫는다.
-		 * 
-		 */
-		btBack.setOnAction(e1 -> {
+					try {
+						boolean deleted = goodsDVO.deleteGoods(selectMenuEditGoodsVO.getGoods());
+						if (deleted) {
+							AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
 
-			dialogStage.close();
+						} else {
+							AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
+						}
 
-		}); // end of btBack
+					} catch (SQLException sqle) {
+						sqle.printStackTrace();
+						AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
+					}
+				});
+			}); // end of btEditDelete
+			/*****************
+			 * 2019 10 월 18 일 작성자 : 심재현
+			 * 
+			 * 기능 : 메뉴 확인 창을 닫는다.
+			 * 
+			 */
+			btBack.setOnAction(e1 -> {
 
-		dialogStage.setScene(scene);
-		dialogStage.setResizable(false);
-		dialogStage.show();
+				dialogStage.close();
 
+			}); // end of btBack
+
+			dialogStage.setScene(scene);
+			dialogStage.setResizable(false);
+			dialogStage.show();	
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+			AlertManager.getInstance().show(AlertInfo.ERROR_LOAD_SCENE, null);
+		}
 	} // end of handlerButtonMenuCheck
 
 	/****************************
@@ -858,24 +859,19 @@ public class MainController implements Initializable {
 	 */
 
 	private void loadTotalGoodsDB() {
+		try {
+			GoodsDAO goodsDVO = new GoodsDAO();
+			ArrayList<GoodsVO> fetchedList = goodsDVO.getGoodsTotal();
 
-		ArrayList<GoodsVO> list = null;
-		GoodsVO goodsVO = null;
-		GoodsDAO goodsDVO = new GoodsDAO();
-		list = goodsDVO.getGoodsTotal();
+			for (int i = 0; i < fetchedList.size(); i++) {
+				GoodsVO goods = fetchedList.get(i);
+				goodsVOList.add(goods);
+				goodsList.add(goods);
+			}
 
-		if (list == null) {
-			AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
-			return;
-
-		}
-
-		for (int i = 0; i < list.size(); i++) {
-
-			goodsVO = list.get(i);
-			goodsVOList.add(goodsVO);
-			goodsList.add(goodsVO);
-
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		}
 
 	} // end of loadTotalGoodsDB
