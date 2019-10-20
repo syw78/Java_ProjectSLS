@@ -192,5 +192,7 @@ public class SaleDAO {
 		}
 		return list;
 	}
+	
+	
 
 }

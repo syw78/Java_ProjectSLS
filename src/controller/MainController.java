@@ -1,6 +1,5 @@
 package controller;
 
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,13 +10,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -108,15 +104,6 @@ public class MainController implements Initializable {
 
 		loadTotalGoodsDB();
 
-		tableView.setOnMousePressed(e1 -> {
-
-			selectSaleVOList = tableView.getSelectionModel().getSelectedItems();
-			selectSale = tableView.getSelectionModel().getSelectedItem();
-			selectSaleIndex = tableView.getSelectionModel().getSelectedIndex();
-			System.out.println(selectSaleIndex);
-
-		}); // end of tableView select
-
 		btSearch.setOnAction(e -> handlerButtonSaleSearchAction(e));
 
 		btSaleAdd.setOnAction(e -> handlerButtonSaleAddAction(e));
@@ -128,6 +115,14 @@ public class MainController implements Initializable {
 		datePicker.setOnAction(e -> handlerDatePicker(e));
 
 		btSaleTotalPrice.setOnAction(e -> handlerButtonSaleTotalPrice(e));
+
+		tableView.setOnMousePressed(e1 -> {
+
+			selectSaleVOList = tableView.getSelectionModel().getSelectedItems();
+			selectSale = tableView.getSelectionModel().getSelectedItem();
+			selectSaleIndex = tableView.getSelectionModel().getSelectedIndex();
+
+		}); // end of tableView select
 
 	} // end of initialize
 
@@ -188,43 +183,6 @@ public class MainController implements Initializable {
 
 		}
 	} // end of handlerDatePicker
-
-	/************************
-	 * 
-	 * 기능 : 바 차트에 내용 표시 2019 10 월 19 일
-	 * 
-	 * 작성자 : 심재현
-	 * 
-	 */
-	private void barChartSetting() {
-
-		ObservableList<XYChart.Data<String, Integer>> barChartList = FXCollections.observableArrayList();
-		XYChart.Series<String, Integer> series = new XYChart.Series<>();
-
-		barChart.setTitle(localDateStr + "매출");
-
-		if (!(barChartList.equals(null))) {
-
-			barChartList.removeAll(barChartList);
-
-		}
-
-		for (int i = 0; i < dateSelectList.size(); i++) {
-
-			System.out.println(dateSelectList.get(i).getGoods());
-			barChartList.add(new XYChart.Data<String, Integer>(dateSelectList.get(i).getGoods(),
-					(Integer) (dateSelectList.get(i).getTotal())));
-
-		}
-
-		series.getData().clear();
-		barChart.getData().clear();
-
-		series.setName(localDateStr);
-		series.setData(barChartList);
-		barChart.getData().add(series);
-
-	} // end of barChartSetting
 
 	/**************************
 	 * 기능 : 등록 버튼을 누르면 등록 창을 연다. 2019 10월 18 일 handlerButtonSaleAddAction 메소드 작성자 :
@@ -328,11 +286,13 @@ public class MainController implements Initializable {
 			columnComents.setMaxWidth(110);
 			columnComents.setStyle("-fx-alignment: CENTER;");
 			columnComents.setCellValueFactory(new PropertyValueFactory("coments"));
-			if(!(saleVOList.equals(null))) {
+
+			if (!(saleVOList.equals(null))) {
 
 				saleVOList.removeAll(saleVOList);
 
 			}
+
 			tableView.setItems(saleVOList);
 
 			tableView.getColumns().addAll(columnDate, columnGoods, columnPrice, columnCount, columnTotal,
@@ -340,8 +300,11 @@ public class MainController implements Initializable {
 
 			/*************************
 			 * 2019 10 월 18 일 작성자 : 심재현
+			 * 수정 20일 심재현
 			 * 
-			 * 기능 : 비고 텍스트필드에서 키 이벤트 메소드를 걸어 놓
+			 * 기능 : 비고 텍스트필드에서 키 이벤트 메소드를 걸어 놓음
+			 * 
+			 * 수정 내용 : 중복된 물품 이름이 있을 시 합쳐서 테이블 뷰에 하나만 보이게 함
 			 * 
 			 */
 			tfSaleComents.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -353,21 +316,73 @@ public class MainController implements Initializable {
 
 					if (keyCode.equals(KeyCode.ENTER)) {
 
+						boolean duplicateGoodsName = false;
+
+						SaleVO notDuplicateSaleVO = null;
+						SaleVO pastSaleVO = null;
+
+						int notDuplicateSaleVOTotal = 0;
+						int notDuplicateSaleVOCount = 0;
 						int count = Integer.parseInt(tfSaleCount.getText().trim());
 						int price = Integer.parseInt(tfSalePrice.getPromptText());
+						System.out.println(count);
+						System.out.println(price);
 						saveTotalPrice = count * price;
-
+						System.out.println(saveTotalPrice);
+						
 						tfSaleTotal.setText(String.valueOf(saveTotalPrice));
 						tfSaleTotal.setEditable(false);
 
 						if ((!tfSaleTotal.equals(null)) && (!dpSaleDate.equals(null))) {
-
+							
 							saveSaleVO = new SaleVO(dpSaleDate.getValue().toString(), saveGoodsString,
 									Integer.parseInt(tfSalePrice.getPromptText()),
 									Integer.parseInt(tfSaleCount.getText().trim()), saveTotalPrice,
 									tfSaleComents.getText());
+							
+							System.out.println(saveTotalPrice);
+							System.out.println(saveSaleVO.getCount());
+							
+							if (saleVOList.isEmpty()) {
 
-							saleVOList.add(saveSaleVO);
+								saleVOList.add(saveSaleVO);
+
+							} else {
+								
+								for (int i = 0; i < saleVOList.size(); i++) {
+
+									if (saleVOList.get(i).getGoods().equals(saveSaleVO.getGoods())) {
+
+										duplicateGoodsName = false;
+										notDuplicateSaleVOCount = saleVOList.get(i).getCount() + saveSaleVO.getCount();
+										notDuplicateSaleVOTotal = saleVOList.get(i).getTotal() + saveSaleVO.getTotal();
+										pastSaleVO = saleVOList.get(i);
+										break;
+
+									} else {
+
+										duplicateGoodsName = true;
+
+									}
+
+								}
+
+								if (duplicateGoodsName) {
+
+									saleVOList.add(saveSaleVO);
+
+									duplicateGoodsName = false;
+
+								} else {
+									
+									saleVOList.remove(pastSaleVO);
+									saveSaleVO.setCount(notDuplicateSaleVOCount);
+									saveSaleVO.setTotal(notDuplicateSaleVOTotal);
+
+									saleVOList.add(saveSaleVO);
+
+								}
+							}
 
 							tableView.setItems(saleVOList);
 
@@ -492,7 +507,7 @@ public class MainController implements Initializable {
 
 		try {
 
-			if(selectSale.equals(null)) {
+			if (selectSale.equals(null)) {
 
 			}
 
@@ -503,7 +518,6 @@ public class MainController implements Initializable {
 			return;
 
 		}
-
 
 		try {
 
@@ -739,8 +753,7 @@ public class MainController implements Initializable {
 
 						} else {
 
-							goodsDVO.updateOnlyPrice(selectMenuEditGoodsVO,
-									Integer.parseInt(tfEditPrice.getText()));
+							goodsDVO.updateOnlyPrice(selectMenuEditGoodsVO, Integer.parseInt(tfEditPrice.getText()));
 
 						}
 					} catch (Exception e3) {
@@ -841,7 +854,7 @@ public class MainController implements Initializable {
 	} // end of handlerButtonMenuCheck
 
 	/****************************
-	 * 기능 : 테이블 뷰의 표시된 금액을 전부 합해서 보여준다. 2019 10 월 19 
+	 * 기능 : 테이블 뷰의 표시된 금액을 전부 합해서 보여준다. 2019 10 월 19
 	 * 
 	 * 작성자 : 심재현
 	 * 
@@ -850,7 +863,7 @@ public class MainController implements Initializable {
 
 		int saleTotalPrice = 0;
 
-		for(int i = 0; i < dateSelectList.size(); i++) {
+		for (int i = 0; i < dateSelectList.size(); i++) {
 
 			saleTotalPrice = dateSelectList.get(i).getTotal() + saleTotalPrice;
 
@@ -859,7 +872,6 @@ public class MainController implements Initializable {
 		tfTotalSalePrice.setText(String.valueOf(saleTotalPrice));
 
 	} // end of handlerButtonSaleTotalPrice
-
 
 	/************************************
 	 * 기능 : 데이터 베이스에 저장된 goodsVO 정보를 모두 불러온다. 2019 10 월 18 일 작성자 : 심재현
@@ -932,5 +944,43 @@ public class MainController implements Initializable {
 		tableView.getColumns().addAll(columnDate, columnGoods, columnPrice, columnCount, columnTotal, columnComents);
 
 	} // end of tableViewSetting
+
+	/************************
+	 * 
+	 * 기능 : 바 차트에 내용 표시 2019 10 월 19 일
+	 * 
+	 * 작성자 : 심재현
+	 * 
+	 */
+	private void barChartSetting() {
+
+		ObservableList<XYChart.Data<String, Integer>> barChartList = FXCollections.observableArrayList();
+		XYChart.Series<String, Integer> series = new XYChart.Series<>();
+
+		barChart.setTitle(localDateStr + "매출");
+
+		if (!(barChartList.equals(null))) {
+
+			barChartList.removeAll(barChartList);
+
+		}
+
+		dateSelectList = dateSelectList.sorted();
+
+		for (int i = 0; i < dateSelectList.size(); i++) {
+
+			barChartList.add(new XYChart.Data<String, Integer>(dateSelectList.get(i).getGoods(),
+					(Integer) (dateSelectList.get(i).getTotal())));
+
+		}
+
+		series.getData().clear();
+		barChart.getData().clear();
+
+		series.setName(localDateStr);
+		series.setData(barChartList);
+		barChart.getData().add(series);
+
+	} // end of barChartSetting
 
 }
