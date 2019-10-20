@@ -59,7 +59,9 @@ public class MainController implements Initializable {
 	private BarChart<String, Integer> barChart;
 
 	/********************
-	 * 기능 : 필요한 saleVO 모델의 변수 2019 10 월 18 일 작성자 : 심재현
+	 * 기능 : 필요한 saleVO 모델의 변수 2019 10 월 18 일
+	 * 
+	 * 작성자 : 심재현
 	 * 
 	 */
 	private ObservableList<SaleVO> saleVOList = FXCollections.observableArrayList();
@@ -75,7 +77,9 @@ public class MainController implements Initializable {
 	private String saveGoodsString = null;
 
 	/*******************************
-	 * 기능 : 필요한 goodsVO의 변수들 2019 10 월 18 일 작성자 : 심재현
+	 * 기능 : 필요한 goodsVO의 변수들 2019 10 월 18 일
+	 * 
+	 * 작성자 : 심재현
 	 * 
 	 */
 	private ArrayList<GoodsVO> goodsList = new ArrayList<GoodsVO>();
@@ -87,7 +91,9 @@ public class MainController implements Initializable {
 	private GoodsVO selectMenuEditGoodsVO = null;
 
 	/**********************************
-	 * 기능 : 필요한 그 외의 변수들 2019 10 월 18 일 작성자 : 심재현
+	 * 기능 : 필요한 그 외의 변수들 2019 10 월 18 일
+	 * 
+	 * 작성자 : 심재현
 	 * 
 	 */
 	private LocalDate localDate = null;
@@ -185,9 +191,9 @@ public class MainController implements Initializable {
 	} // end of handlerDatePicker
 
 	/**************************
-	 * 기능 : 등록 버튼을 누르면 등록 창을 연다. 2019 10월 18 일 handlerButtonSaleAddAction 메소드 작성자 :
-	 * 심재현
+	 * 기능 : 등록 버튼을 누르면 등록 창을 연다. 2019 10월 18 일
 	 * 
+	 * 작성자 :심재현
 	 */
 	private void handlerButtonSaleAddAction(ActionEvent e) {
 
@@ -501,7 +507,9 @@ public class MainController implements Initializable {
 	} // end of handlerButtonSaleAddAction
 
 	/************************************
-	 * 기능 : 버튼을 누르면 항목을 지운다. 2019 10 월 18 일 작성자 : 심재현
+	 * 기능 : 버튼을 누르면 항목을 지운다. 2019 10 월 18 일
+	 * 
+	 * 작성자 : 심재현
 	 * 
 	 */
 	private void handlerButtonSaleDelete(ActionEvent e) {
@@ -558,7 +566,9 @@ public class MainController implements Initializable {
 	} // end of handlerButtonSaleDelete
 
 	/***************************
-	 * 기능 : 버튼을 누르면 메뉴 확인 다이얼로그 창을 띄운다. 2019 10 월 18 일 작성자 : 심재현
+	 * 기능 : 버튼을 누르면 메뉴 확인 다이얼로그 창을 띄운다. 2019 10 월 18 일
+	 * 
+	 * 작성자 : 심재현
 	 * 
 	 */
 	private void handlerButtonMenuCheck(ActionEvent e) {
@@ -598,10 +608,9 @@ public class MainController implements Initializable {
 		tableView.getColumns().addAll(columnGoods, columnPrice);
 
 		/*******************
-		 * 2019 10 월 18 일 작성자 : 심재현
+		 * 기능 : 검색버튼 2019 10 월 18 일
 		 * 
-		 * 기능 : 검색버튼
-		 * 
+		 * 작성자 : 심재현
 		 */
 		btSearch.setOnAction(e1 -> {
 
@@ -623,10 +632,9 @@ public class MainController implements Initializable {
 		}); // end of btSearch
 
 		/**********************
-		 * 2019 10 월 18 일 작성자 : 심재현
+		 * 기능 : 테이블뷰 새로 고침 버튼 2019 10 월 18 일
 		 * 
-		 * 기능 : 테이블뷰 새로 고침 버튼
-		 * 
+		 * 작성자 : 심재현
 		 */
 		btMenuRefresh.setOnAction(e1 -> {
 
@@ -638,10 +646,9 @@ public class MainController implements Initializable {
 		});
 
 		/******************************
-		 * 2019 10 월 18 일 작성자 : 심재현
+		 * 기능 : 메뉴를 등록한다. 2019 10 월 18 일
 		 * 
-		 * 기능 : 메뉴를 등록한다.
-		 * 
+		 * 작성자 : 심재현
 		 */
 		btAdd.setOnAction(e1 -> {
 
@@ -868,7 +875,9 @@ public class MainController implements Initializable {
 	} // end of handlerButtonSaleTotalPrice
 
 	/************************************
-	 * 기능 : 데이터 베이스에 저장된 goodsVO 정보를 모두 불러온다. 2019 10 월 18 일 작성자 : 심재현
+	 * 기능 : 데이터 베이스에 저장된 goodsVO 정보를 모두 불러온다. 2019 10 월 18 일
+	 * 
+	 * 작성자 : 심재현
 	 * 
 	 */
 
@@ -941,9 +950,8 @@ public class MainController implements Initializable {
 
 	/************************
 	 * 
-	 * 기능 : 바 차트에 내용 표시 2019 10 월 19 일
-	 * 수정 : 2019 10 월 20 일 심재현 
-	 * 수정 내용 : 해당 ObservableList 를 받아서 차트를 보여준다.
+	 * 기능 : 바 차트에 내용 표시 2019 10 월 19 일 수정 : 2019 10 월 20 일 심재현 수정 내용 : 해당
+	 * ObservableList 를 받아서 차트를 보여준다.
 	 * 
 	 * 작성자 : 심재현
 	 * 
