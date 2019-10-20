@@ -641,8 +641,8 @@ public class MainController implements Initializable {
 
 				try {
 
-					Scene scene = SceneLoader.getInstance().makeMenuAddScene();
-					Parent menuAddRoot = scene.getRoot();
+					Scene menuAddScene = SceneLoader.getInstance().makeMenuAddScene();
+					Parent menuAddRoot = menuAddScene.getRoot();
 					Stage dialMenuAddStage = new Stage(StageStyle.UTILITY);
 					dialMenuAddStage.initModality(Modality.WINDOW_MODAL);
 					dialMenuAddStage.initOwner(btMenuCheck.getScene().getWindow());
@@ -671,7 +671,7 @@ public class MainController implements Initializable {
 
 					});
 
-					dialMenuAddStage.setScene(scene);
+					dialMenuAddStage.setScene(menuAddScene);
 					dialMenuAddStage.setResizable(false);
 					dialMenuAddStage.show();
 
@@ -706,8 +706,8 @@ public class MainController implements Initializable {
 			btEdit.setOnAction(e1 -> {
 
 				try {
-					Scene scene = SceneLoader.getInstance().makeMenuEditScene();
-					Parent menuEditRoot = scene.getRoot();
+					Scene menuEditScene = SceneLoader.getInstance().makeMenuEditScene();
+					Parent menuEditRoot = menuEditScene.getRoot();
 					Stage dialogEditStage = new Stage(StageStyle.UTILITY);
 					dialogEditStage.initModality(Modality.WINDOW_MODAL);
 					dialogEditStage.initOwner(btMenuCheck.getScene().getWindow());
@@ -772,7 +772,7 @@ public class MainController implements Initializable {
 						}
 					}); // end of btEditBack
 
-					dialogEditStage.setScene(scene);
+					dialogEditStage.setScene(menuEditScene);
 					dialogEditStage.setResizable(false);
 					dialogEditStage.show();
 
