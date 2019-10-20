@@ -126,15 +126,15 @@ public class MainController implements Initializable {
 		btMenuCheck.setOnAction(e -> handlerButtonMenuCheck(e));
 
 		datePicker.setOnAction(e -> handlerDatePicker(e));
-		
+
 		btSaleTotalPrice.setOnAction(e -> handlerButtonSaleTotalPrice(e));
 
 	} // end of initialize
-	
+
 	private void handlerButtonSaleSearchAction(ActionEvent e) {
-		
+
 		try {
-			
+
 			String searchGoods = tfGoodsName.getText().trim();
 			localDate = datePicker.getValue();
 			String localDateStr = localDate.getYear() + "-" + localDate.getMonthValue() + "-"
@@ -329,9 +329,9 @@ public class MainController implements Initializable {
 			columnComents.setStyle("-fx-alignment: CENTER;");
 			columnComents.setCellValueFactory(new PropertyValueFactory("coments"));
 			if(!(saleVOList.equals(null))) {
-				
+
 				saleVOList.removeAll(saleVOList);
-				
+
 			}
 			tableView.setItems(saleVOList);
 
@@ -489,21 +489,21 @@ public class MainController implements Initializable {
 	 * 
 	 */
 	private void handlerButtonSaleDelete(ActionEvent e) {
-		
+
 		try {
-			
+
 			if(selectSale.equals(null)) {
-		
+
 			}
 
 		} catch (Exception e2) {
-			
+
 			AlertMessage.alertWarningDisplay(1, "삭제 오류", "삭제 오류입니다.", "항목을 선택하지 않았습니다.");
 			e2.printStackTrace();
 			return;
-			
+
 		}
-		
+
 
 		try {
 
@@ -529,7 +529,7 @@ public class MainController implements Initializable {
 					saleVOList.removeAll(saleVOList);
 					ObservableList<SaleVO> list2 = FXCollections.observableArrayList(searchDateSaleVO);
 					tableView.setItems(list2);
-					
+
 					barChartSetting();
 
 				} else {
@@ -555,296 +555,288 @@ public class MainController implements Initializable {
 	 */
 	private void handlerButtonMenuCheck(ActionEvent e) {
 
-		try {
+		Scene scene = SceneLoader.getInstance().makeMenuCheckScene();
+		Parent menuCheckRoot = scene.getRoot();
+		Stage dialogStage = new Stage(StageStyle.UTILITY);
+		dialogStage.initModality(Modality.WINDOW_MODAL);
+		dialogStage.initOwner(btMenuCheck.getScene().getWindow());
+		dialogStage.setTitle("수정");
 
-			Scene scene = SceneLoader.getInstance().makeMenuCheckScene();
-			Parent menuCheckRoot = scene.getRoot();
-			Stage dialogStage = new Stage(StageStyle.UTILITY);
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-			dialogStage.initOwner(btMenuCheck.getScene().getWindow());
-			dialogStage.setTitle("수정");
+		TableView<GoodsVO> tableView = (TableView<GoodsVO>) menuCheckRoot.lookup("#tableView");
+		TextField tfGoods = (TextField) menuCheckRoot.lookup("#tfGoods");
+		Button btSearch = (Button) menuCheckRoot.lookup("#btSearch");
+		Button btMenuRefresh = (Button) menuCheckRoot.lookup("#btMenuRefresh");
+		Button btAdd = (Button) menuCheckRoot.lookup("#btAdd");
+		Button btEdit = (Button) menuCheckRoot.lookup("#btEdit");
+		Button btEditDelete = (Button) menuCheckRoot.lookup("#btEditDelete");
+		Button btBack = (Button) menuCheckRoot.lookup("#btBack");
 
-			TableView<GoodsVO> tableView = (TableView<GoodsVO>) menuCheckRoot.lookup("#tableView");
-			TextField tfGoods = (TextField) menuCheckRoot.lookup("#tfGoods");
-			Button btSearch = (Button) menuCheckRoot.lookup("#btSearch");
-			Button btMenuRefresh = (Button) menuCheckRoot.lookup("#btMenuRefresh");
-			Button btAdd = (Button) menuCheckRoot.lookup("#btAdd");
-			Button btEdit = (Button) menuCheckRoot.lookup("#btEdit");
-			Button btEditDelete = (Button) menuCheckRoot.lookup("#btEditDelete");
-			Button btBack = (Button) menuCheckRoot.lookup("#btBack");
+		tableView.setEditable(false);
 
-			tableView.setEditable(false);
+		TableColumn columnGoods = new TableColumn("물품");
+		columnGoods.setMaxWidth(100);
+		columnGoods.setStyle("-fx-alignment: CENTER;");
+		columnGoods.setCellValueFactory(new PropertyValueFactory("goods"));
 
-			TableColumn columnGoods = new TableColumn("물품");
-			columnGoods.setMaxWidth(100);
-			columnGoods.setStyle("-fx-alignment: CENTER;");
-			columnGoods.setCellValueFactory(new PropertyValueFactory("goods"));
+		TableColumn columnPrice = new TableColumn("가격");
+		columnPrice.setMaxWidth(100);
+		columnPrice.setStyle("-fx-alignment: CENTER;");
+		columnPrice.setCellValueFactory(new PropertyValueFactory("price"));
 
-			TableColumn columnPrice = new TableColumn("가격");
-			columnPrice.setMaxWidth(100);
-			columnPrice.setStyle("-fx-alignment: CENTER;");
-			columnPrice.setCellValueFactory(new PropertyValueFactory("price"));
+		goodsVOList.removeAll(goodsVOList);
+		loadTotalGoodsDB();
+
+		tableView.setItems(goodsVOList);
+		tableView.getColumns().addAll(columnGoods, columnPrice);
+
+		/*******************
+		 * 2019 10 월 18 일 작성자 : 심재현
+		 * 
+		 * 기능 : 검색버튼
+		 * 
+		 */
+		btSearch.setOnAction(e1 -> {
+
+			ObservableList<GoodsVO> list = FXCollections.observableArrayList();
+			goodsDVO = new GoodsDAO();
+
+			try {
+
+				list = goodsDVO.getCheckGoods(tfGoods.getText());
+				tableView.setItems(list);
+
+			} catch (Exception e2) {
+
+				AlertMessage.alertWarningDisplay(1, "오류", "오류 입니다.", "다시 시도 해 주세요.");
+				e2.printStackTrace();
+
+			}
+
+		}); // end of btSearch
+
+		/**********************
+		 * 2019 10 월 18 일 작성자 : 심재현
+		 * 
+		 * 기능 : 테이블뷰 새로 고침 버튼
+		 * 
+		 */
+		btMenuRefresh.setOnAction(e1 -> {
 
 			goodsVOList.removeAll(goodsVOList);
 			loadTotalGoodsDB();
 
 			tableView.setItems(goodsVOList);
-			tableView.getColumns().addAll(columnGoods, columnPrice);
 
-			/*******************
-			 * 2019 10 월 18 일 작성자 : 심재현
-			 * 
-			 * 기능 : 검색버튼
-			 * 
-			 */
-			btSearch.setOnAction(e1 -> {
+		});
 
-				ObservableList<GoodsVO> list = FXCollections.observableArrayList();
-				goodsDVO = new GoodsDAO();
+		/******************************
+		 * 2019 10 월 18 일 작성자 : 심재현
+		 * 
+		 * 기능 : 메뉴를 등록한다.
+		 * 
+		 */
+		btAdd.setOnAction(e1 -> {
 
-				try {
+			try {
 
-					list = goodsDVO.getCheckGoods(tfGoods.getText());
-					tableView.setItems(list);
+				Scene addMenuScene = SceneLoader.getInstance().makeMenuAddScene();
+				Parent menuAddRoot = addMenuScene.getRoot();
+				Stage dialMenuAddStage = new Stage(StageStyle.UTILITY);
+				dialMenuAddStage.initModality(Modality.WINDOW_MODAL);
+				dialMenuAddStage.initOwner(btMenuCheck.getScene().getWindow());
+				dialMenuAddStage.setTitle("메뉴 등록");
 
-				} catch (Exception e2) {
+				TextField tfAddGoods = (TextField) menuAddRoot.lookup("#tfAddGoods");
+				TextField tfAddPrice = (TextField) menuAddRoot.lookup("#tfAddPrice");
+				Button btAddGoods = (Button) menuAddRoot.lookup("#btAddGoods");
+				Button btAddCancle = (Button) menuAddRoot.lookup("#btAddCancle");
 
-					AlertMessage.alertWarningDisplay(1, "오류", "오류 입니다.", "다시 시도 해 주세요.");
-					e2.printStackTrace();
-
-				}
-
-			}); // end of btSearch
-
-			/**********************
-			 * 2019 10 월 18 일 작성자 : 심재현
-			 * 
-			 * 기능 : 테이블뷰 새로 고침 버튼
-			 * 
-			 */
-			btMenuRefresh.setOnAction(e1 -> {
-
-				goodsVOList.removeAll(goodsVOList);
-				loadTotalGoodsDB();
-
-				tableView.setItems(goodsVOList);
-
-			});
-
-			/******************************
-			 * 2019 10 월 18 일 작성자 : 심재현
-			 * 
-			 * 기능 : 메뉴를 등록한다.
-			 * 
-			 */
-			btAdd.setOnAction(e1 -> {
-
-				try {
-
-					Scene scene = SceneLoader.getInstance().makeMenuAddScene();
-					Parent menuAddRoot = scene.getRoot();
-					Stage dialMenuAddStage = new Stage(StageStyle.UTILITY);
-					dialMenuAddStage.initModality(Modality.WINDOW_MODAL);
-					dialMenuAddStage.initOwner(btMenuCheck.getScene().getWindow());
-					dialMenuAddStage.setTitle("메뉴 등록");
-
-					TextField tfAddGoods = (TextField) menuAddRoot.lookup("#tfAddGoods");
-					TextField tfAddPrice = (TextField) menuAddRoot.lookup("#tfAddPrice");
-					Button btAddGoods = (Button) menuAddRoot.lookup("#btAddGoods");
-					Button btAddCancle = (Button) menuAddRoot.lookup("#btAddCancle");
-
-					btAddGoods.setOnAction(e3 -> {
-
-						goodsDVO = new GoodsDAO();
-
-						GoodsVO insertGoods = new GoodsVO(tfAddGoods.getText(), Integer.parseInt(tfAddPrice.getText()));
-
-						goodsDVO.insertGoodsDB(insertGoods);
-
-						AlertMessage.alertWarningDisplay(1, "메뉴 등록 성공", "메뉴 등록 성공", "메뉴를 등록했습니다.");
-
-					});
-
-					btAddCancle.setOnAction(e3 -> {
-
-						dialMenuAddStage.close();
-
-					});
-
-					dialMenuAddStage.setScene(scene);
-					dialMenuAddStage.setResizable(false);
-					dialMenuAddStage.show();
-
-				} catch (Exception e2) {
-
-					AlertMessage.alertWarningDisplay(1, "오류", "오류 입니다.", "다시 확인 해 주세요.");
-					e2.printStackTrace();
-
-				}
-
-			}); // end of btAdd
-
-			/**************************
-			 * 2019 10 월 18 일 작성자 : 심재현
-			 * 
-			 * 기능 : 테이블뷰 선택 시 정보를 저장한다.
-			 * 
-			 */
-			tableView.setOnMousePressed(e1 -> {
-
-				selectMenuEditGoodsVO = tableView.getSelectionModel().getSelectedItem();
-				selectMenuEditGoodsVOList = tableView.getSelectionModel().getSelectedItems();
-
-			}); // end of tableView select
-
-			/************************************
-			 * 2019 10 월 18일 작성자 : 심재현
-			 * 
-			 * 기능 : 테이블 뷰에서 선택된 항목을 수정하는 창을 보여준다.
-			 * 
-			 */
-			btEdit.setOnAction(e1 -> {
-
-				try {
-					Scene scene = SceneLoader.getInstance().makeMenuEditScene();
-					Parent menuEditRoot = scene.getRoot();
-					Stage dialogEditStage = new Stage(StageStyle.UTILITY);
-					dialogEditStage.initModality(Modality.WINDOW_MODAL);
-					dialogEditStage.initOwner(btMenuCheck.getScene().getWindow());
-					dialogEditStage.setTitle("메뉴 수정");
-
-					TextField tfEditGoods = (TextField) menuEditRoot.lookup("#tfEditGoods");
-					TextField tfEditPrice = (TextField) menuEditRoot.lookup("#tfEditPrice");
-					Button btEditOk = (Button) menuEditRoot.lookup("#btEditOk");
-					Button btEditBack = (Button) menuEditRoot.lookup("#btEditBack");
-
-					editGoods = selectMenuEditGoodsVOList.get(0).getGoods();
-
-					tfEditGoods.setPromptText(editGoods);
-					tfEditGoods.setEditable(false);
-					tfEditPrice.setPromptText(String.valueOf(selectMenuEditGoodsVOList.get(0).getPrice()));
-
-					/********************************
-					 * 2019 10 월 18 일 작성자 : 심재현
-					 * 
-					 * 기능 : 수정한 내용을 업데이트 한다.
-					 * 
-					 */
-					btEditOk.setOnAction(e2 -> {
-						try {
-							goodsDVO = new GoodsDAO();
-
-							if (tfEditGoods.getPromptText().equals(null)) {
-
-								goodsDVO.updateGoods(selectMenuEditGoodsVO, tfEditGoods.getText(),
-										Integer.parseInt(tfEditPrice.getText()));
-
-							} else {
-
-								goodsDVO.updateOnlyPrice(selectMenuEditGoodsVO,
-										Integer.parseInt(tfEditPrice.getText()));
-
-							}
-						} catch (Exception e3) {
-							e3.printStackTrace();
-							AlertMessage.alertWarningDisplay(1, "오류", "수정 오류 입니다.", "다시 확인 해주세요.");
-						}
-
-					}); // end of btEditOk
-
-					/********************************************
-					 * 2019 10 월 18 일 작성자 : 심재현
-					 * 
-					 * 기능 : 수정 창을 닫는다.
-					 * 
-					 */
-					btEditBack.setOnAction(e2 -> {
-						try {
-							goodsVOList.removeAll(goodsVOList);
-							loadTotalGoodsDB();
-
-							tableView.setItems(goodsVOList);
-
-							dialogEditStage.close();
-						} catch (Exception e3) {
-							e3.printStackTrace();
-							AlertMessage.alertWarningDisplay(1, "오류", "뒤로가기 오류 입니다.", "다시 확인 해 주세요.");
-						}
-					}); // end of btEditBack
-
-					dialogEditStage.setScene(scene);
-					dialogEditStage.setResizable(false);
-					dialogEditStage.show();
-
-				} catch (Exception e3) {
-
-					AlertMessage.alertWarningDisplay(1, "오류", "오류 입니다.", "다시 확인 해 주세요.");
-					e3.printStackTrace();
-
-				}
-
-			}); // end of btEdit
-
-			/***********************
-			 * 2019 10 월 18 일 작성자 : 심재현
-			 * 
-			 * 기능 : 테이블 뷰에서 선택 된 항목을 테이블 뷰에서 삭제한다.
-			 * 
-			 */
-			btEditDelete.setOnAction(e1 -> {
-
-				try {
+				btAddGoods.setOnAction(e3 -> {
 
 					goodsDVO = new GoodsDAO();
 
-					AlertMessage.alertWarningDisplay(5, "삭제 주의", "삭제하시겠습니까?", "삭제하시겠습니까?");
+					GoodsVO insertGoods = new GoodsVO(tfAddGoods.getText(), Integer.parseInt(tfAddPrice.getText()));
 
-					if (AlertMessage.alert.getResult() == ButtonType.OK) {
+					goodsDVO.insertGoodsDB(insertGoods);
 
-						int i = goodsDVO.deleteGoods(selectMenuEditGoodsVO.getGoods());
-						System.out.println(selectMenuEditGoodsVO.getGoods());
+					AlertMessage.alertWarningDisplay(1, "메뉴 등록 성공", "메뉴 등록 성공", "메뉴를 등록했습니다.");
 
-						if (i == 1) {
+				});
 
-							AlertMessage.alertWarningDisplay(1, "삭제 완료", "삭제 완료", "삭제 완료");
+				btAddCancle.setOnAction(e3 -> {
+
+					dialMenuAddStage.close();
+
+				});
+
+				dialMenuAddStage.setScene(addMenuScene);
+				dialMenuAddStage.setResizable(false);
+				dialMenuAddStage.show();
+
+			} catch (Exception e2) {
+
+				AlertMessage.alertWarningDisplay(1, "오류", "오류 입니다.", "다시 확인 해 주세요.");
+				e2.printStackTrace();
+
+			}
+
+		}); // end of btAdd
+
+		/**************************
+		 * 2019 10 월 18 일 작성자 : 심재현
+		 * 
+		 * 기능 : 테이블뷰 선택 시 정보를 저장한다.
+		 * 
+		 */
+		tableView.setOnMousePressed(e1 -> {
+
+			selectMenuEditGoodsVO = tableView.getSelectionModel().getSelectedItem();
+			selectMenuEditGoodsVOList = tableView.getSelectionModel().getSelectedItems();
+
+		}); // end of tableView select
+
+		/************************************
+		 * 2019 10 월 18일 작성자 : 심재현
+		 * 
+		 * 기능 : 테이블 뷰에서 선택된 항목을 수정하는 창을 보여준다.
+		 * 
+		 */
+		btEdit.setOnAction(e1 -> {
+
+			try {
+				Scene editMenuScene = SceneLoader.getInstance().makeMenuEditScene();
+				Parent menuEditRoot = editMenuScene.getRoot();
+				Stage dialogEditStage = new Stage(StageStyle.UTILITY);
+				dialogEditStage.initModality(Modality.WINDOW_MODAL);
+				dialogEditStage.initOwner(btMenuCheck.getScene().getWindow());
+				dialogEditStage.setTitle("메뉴 수정");
+
+				TextField tfEditGoods = (TextField) menuEditRoot.lookup("#tfEditGoods");
+				TextField tfEditPrice = (TextField) menuEditRoot.lookup("#tfEditPrice");
+				Button btEditOk = (Button) menuEditRoot.lookup("#btEditOk");
+				Button btEditBack = (Button) menuEditRoot.lookup("#btEditBack");
+
+				editGoods = selectMenuEditGoodsVOList.get(0).getGoods();
+
+				tfEditGoods.setPromptText(editGoods);
+				tfEditGoods.setEditable(false);
+				tfEditPrice.setPromptText(String.valueOf(selectMenuEditGoodsVOList.get(0).getPrice()));
+
+				/********************************
+				 * 2019 10 월 18 일 작성자 : 심재현
+				 * 
+				 * 기능 : 수정한 내용을 업데이트 한다.
+				 * 
+				 */
+				btEditOk.setOnAction(e2 -> {
+					try {
+						goodsDVO = new GoodsDAO();
+
+						if (tfEditGoods.getPromptText().equals(null)) {
+
+							goodsDVO.updateGoods(selectMenuEditGoodsVO, tfEditGoods.getText(),
+									Integer.parseInt(tfEditPrice.getText()));
 
 						} else {
 
-							AlertMessage.alertWarningDisplay(1, "삭제 오류", "삭제 오류", "잘못 된 삭제입니다. 다시 확인 해 주세요.");
+							goodsDVO.updateOnlyPrice(selectMenuEditGoodsVO,
+									Integer.parseInt(tfEditPrice.getText()));
 
 						}
+					} catch (Exception e3) {
+						e3.printStackTrace();
+						AlertMessage.alertWarningDisplay(1, "오류", "수정 오류 입니다.", "다시 확인 해주세요.");
+					}
+
+				}); // end of btEditOk
+
+				/********************************************
+				 * 2019 10 월 18 일 작성자 : 심재현
+				 * 
+				 * 기능 : 수정 창을 닫는다.
+				 * 
+				 */
+				btEditBack.setOnAction(e2 -> {
+					try {
+						goodsVOList.removeAll(goodsVOList);
+						loadTotalGoodsDB();
+
+						tableView.setItems(goodsVOList);
+
+						dialogEditStage.close();
+					} catch (Exception e3) {
+						e3.printStackTrace();
+						AlertMessage.alertWarningDisplay(1, "오류", "뒤로가기 오류 입니다.", "다시 확인 해 주세요.");
+					}
+				}); // end of btEditBack
+
+				dialogEditStage.setScene(editMenuScene);
+				dialogEditStage.setResizable(false);
+				dialogEditStage.show();
+
+			} catch (Exception e3) {
+
+				AlertMessage.alertWarningDisplay(1, "오류", "오류 입니다.", "다시 확인 해 주세요.");
+				e3.printStackTrace();
+
+			}
+
+		}); // end of btEdit
+
+		/***********************
+		 * 2019 10 월 18 일 작성자 : 심재현
+		 * 
+		 * 기능 : 테이블 뷰에서 선택 된 항목을 테이블 뷰에서 삭제한다.
+		 * 
+		 */
+		btEditDelete.setOnAction(e1 -> {
+
+			try {
+
+				goodsDVO = new GoodsDAO();
+
+				AlertMessage.alertWarningDisplay(5, "삭제 주의", "삭제하시겠습니까?", "삭제하시겠습니까?");
+
+				if (AlertMessage.alert.getResult() == ButtonType.OK) {
+
+					int i = goodsDVO.deleteGoods(selectMenuEditGoodsVO.getGoods());
+					System.out.println(selectMenuEditGoodsVO.getGoods());
+
+					if (i == 1) {
+
+						AlertMessage.alertWarningDisplay(1, "삭제 완료", "삭제 완료", "삭제 완료");
+
+					} else {
+
+						AlertMessage.alertWarningDisplay(1, "삭제 오류", "삭제 오류", "잘못 된 삭제입니다. 다시 확인 해 주세요.");
 
 					}
 
-				} catch (Exception e2) {
-
-					AlertMessage.alertWarningDisplay(1, "오류", "삭제 오류입니다.", "다시 확인 해 주세요.");
-					e2.printStackTrace();
-
 				}
 
-			}); // end of btEditDelete
-			/*****************
-			 * 2019 10 월 18 일 작성자 : 심재현
-			 * 
-			 * 기능 : 메뉴 확인 창을 닫는다.
-			 * 
-			 */
-			btBack.setOnAction(e1 -> {
+			} catch (Exception e2) {
 
-				dialogStage.close();
+				AlertMessage.alertWarningDisplay(1, "오류", "삭제 오류입니다.", "다시 확인 해 주세요.");
+				e2.printStackTrace();
 
-			}); // end of btBack
+			}
 
-			dialogStage.setScene(scene);
-			dialogStage.setResizable(false);
-			dialogStage.show();
+		}); // end of btEditDelete
+		/*****************
+		 * 2019 10 월 18 일 작성자 : 심재현
+		 * 
+		 * 기능 : 메뉴 확인 창을 닫는다.
+		 * 
+		 */
+		btBack.setOnAction(e1 -> {
 
-		} catch (IOException e1) {
+			dialogStage.close();
 
-			e1.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "오류", "오류 입니다.", "다시 확인 해 주세요.");
-		}
+		}); // end of btBack
+
+		dialogStage.setScene(scene);
+		dialogStage.setResizable(false);
+		dialogStage.show();
 
 	} // end of handlerButtonMenuCheck
 
@@ -855,20 +847,20 @@ public class MainController implements Initializable {
 	 * 
 	 */
 	private void handlerButtonSaleTotalPrice(ActionEvent e) {
-		
+
 		int saleTotalPrice = 0;
-		
+
 		for(int i = 0; i < dateSelectList.size(); i++) {
-			
+
 			saleTotalPrice = dateSelectList.get(i).getTotal() + saleTotalPrice;
-			
+
 		}
-		
+
 		tfTotalSalePrice.setText(String.valueOf(saleTotalPrice));
-		
+
 	} // end of handlerButtonSaleTotalPrice
 
-	
+
 	/************************************
 	 * 기능 : 데이터 베이스에 저장된 goodsVO 정보를 모두 불러온다. 2019 10 월 18 일 작성자 : 심재현
 	 * 
