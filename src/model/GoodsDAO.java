@@ -8,8 +8,9 @@ import java.util.ArrayList;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import util.AlertMessage;
+import util.AlertManager;
 import util.DBUtil;
+import util.AlertManager.AlertInfo;
 
 public class GoodsDAO {
 
@@ -32,7 +33,7 @@ public class GoodsDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "품목을 저장하는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 
 			try {
@@ -42,7 +43,7 @@ public class GoodsDAO {
 					con.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 중 에러가 발생했습니다.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 
 		}
@@ -77,7 +78,7 @@ public class GoodsDAO {
 		} catch (Exception e) {
 			
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "품목을 불러오는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			
 		} finally {
 			try {
@@ -89,7 +90,7 @@ public class GoodsDAO {
 					con.close();
 			} catch (SQLException se) {
 				se.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 중 에러가 발생했습니다.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
 		
@@ -115,7 +116,7 @@ public class GoodsDAO {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "품목을 지우는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 			try {
 				// ⑥ 데이터베이스와의 연결에 사용되었던 오브젝트를 해제
@@ -125,7 +126,7 @@ public class GoodsDAO {
 					con.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 중 에러가 발생했습니다.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
 		
@@ -153,14 +154,14 @@ public class GoodsDAO {
 			int check = pstmt.executeUpdate();
 			
 			if(check == 1) {
-				AlertMessage.alertWarningDisplay(1, "Edit Sucess", "Edit Sucess", "Edit Sucess");
+				AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
 			} else {
-				AlertMessage.alertWarningDisplay(1, "Edit Failed", "Edit Failed", "Edit Failed");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "품목을 업데이트 하는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 			try {
 				if (pstmt != null)
@@ -169,7 +170,7 @@ public class GoodsDAO {
 					con.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 연결 도중 에러가 발생했습니다.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 				
 			}
 		}
@@ -197,14 +198,14 @@ public void updateOnlyPrice(GoodsVO goodsVO, int price) {
 			int check = pstmt.executeUpdate();
 			
 			if(check == 1) {
-				AlertMessage.alertWarningDisplay(1, "Edit Sucess", "Edit Sucess", "Edit Sucess");
+				AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
 			} else {
-				AlertMessage.alertWarningDisplay(1, "Edit Failed", "Edit Failed", "Edit Failed");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "품목을 업데이트 하는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 			try {
 				// ⑥ 데이터베이스와의 연결에 사용되었던 오브젝트를 해제
@@ -214,7 +215,7 @@ public void updateOnlyPrice(GoodsVO goodsVO, int price) {
 					con.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 연결 도중 에러가 발생했습니다.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
 		
@@ -244,7 +245,7 @@ public void updateOnlyPrice(GoodsVO goodsVO, int price) {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "품목을 체크하는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 			try {
 				if (rs != null)
@@ -255,7 +256,7 @@ public void updateOnlyPrice(GoodsVO goodsVO, int price) {
 					con.close();
 			} catch (SQLException se) {
 				se.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 중 에러가 발생했습니다.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
 		return list;

@@ -1,6 +1,7 @@
 package controller;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -22,6 +23,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -32,8 +34,9 @@ import model.GoodsDAO;
 import model.GoodsVO;
 import model.SaleDAO;
 import model.SaleVO;
-import util.AlertMessage;
+import util.AlertManager;
 import util.SceneLoader;
+import util.AlertManager.AlertInfo;
 
 public class MainController implements Initializable {
 
@@ -146,8 +149,7 @@ public class MainController implements Initializable {
 		} catch (Exception e1) {
 
 			e1.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "오류", "오류입니다.", "다시 확인 해 주세요.");
-
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
 		}
 	}
 
@@ -179,7 +181,7 @@ public class MainController implements Initializable {
 		} catch (Exception e1) {
 
 			e1.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "오류", "오류입니다.", "다시 확인 해 주세요.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
 
 		}
 	} // end of handlerDatePicker
@@ -287,8 +289,7 @@ public class MainController implements Initializable {
 			columnComents.setStyle("-fx-alignment: CENTER;");
 			columnComents.setCellValueFactory(new PropertyValueFactory("coments"));
 
-			if (!(saleVOList.equals(null))) {
-
+			if(saleVOList != null) {
 				saleVOList.removeAll(saleVOList);
 
 			}
@@ -333,8 +334,8 @@ public class MainController implements Initializable {
 						tfSaleTotal.setText(String.valueOf(saveTotalPrice));
 						tfSaleTotal.setEditable(false);
 
-						if ((!tfSaleTotal.equals(null)) && (!dpSaleDate.equals(null))) {
-							
+						if ((tfSaleTotal != null) && (dpSaleDate != null)) {
+
 							saveSaleVO = new SaleVO(dpSaleDate.getValue().toString(), saveGoodsString,
 									Integer.parseInt(tfSalePrice.getPromptText()),
 									Integer.parseInt(tfSaleCount.getText().trim()), saveTotalPrice,
@@ -409,14 +410,15 @@ public class MainController implements Initializable {
 						saleDAO.insertSaleDB(saleVOList.get(i));
 
 					}
-
-					AlertMessage.alertWarningDisplay(1, "매출등록", "매출 등록 성공", "매출을 등록했습니다.");
-					saleVOList.removeAll(saleVOList);
-					tableView.setItems(selectSaleVOList);
+					
+					AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, buttonType -> {
+						saleVOList.removeAll(saleVOList);
+						tableView.setItems(selectSaleVOList);	
+					});
 
 				} catch (Exception e3) {
-					AlertMessage.alertWarningDisplay(1, "매출등록", "매출 등록 실패", "매출 등록에 실패했습니다. 다시 시도해주세요.");
 					e3.printStackTrace();
+					AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
 				}
 
 			}); // end of btSaleAdd
@@ -441,33 +443,30 @@ public class MainController implements Initializable {
 			 * 
 			 */
 			btSaleDelete.setOnAction(e2 -> {
+				
+				if (selectSaleVO == null) {
+					AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
+					return;
+				}
 
-				if (selectSaleVO.equals(null)) {
+				try {
 
-					AlertMessage.alertWarningDisplay(1, "삭제 실패", "삭제 실패", "삭제에 실패 했습니다. 다시 확인 해 주세요.");
+					saleDAO = new SaleDAO();
 
-				} else {
-
-					try {
-
-						saleDAO = new SaleDAO();
-
-						AlertMessage.alertWarningDisplay(5, "삭제 주의", "삭제하시겠습니까?", "삭제하시겠습니까?");
-
-						if (AlertMessage.alert.getResult() == ButtonType.OK) {
-							addSaleVOList.addAll(saleVOList);
-							saleVOList.remove(selectSale);
-							tableView.setItems(saleVOList);
-
+					AlertManager.getInstance().show(AlertType.CONFIRMATION, "항목 삭제", "선택한 항목을 삭제하시겠습니까?", buttonType -> {
+						if (buttonType != ButtonType.OK) {
+							return;
 						}
 
-					} catch (Exception e3) {
+						addSaleVOList.addAll(saleVOList);
+						saleVOList.remove(selectSale);
+						tableView.setItems(saleVOList);
 
-						AlertMessage.alertWarningDisplay(1, "오류", "오류입니다.", "다시 시도 해 주세요");
-						e3.printStackTrace();
+					});
 
-					}
-
+				} catch (Exception e3) {
+					e3.printStackTrace();
+					AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
 				}
 
 			}); // end of btSaleDelete
@@ -493,7 +492,7 @@ public class MainController implements Initializable {
 		} catch (Exception e2) {
 
 			e2.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "오류", "오류입니다.", "다시 확인 해 주세요.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
 
 		} // end of handlerButtonSaleAddAction
 
@@ -505,33 +504,25 @@ public class MainController implements Initializable {
 	 */
 	private void handlerButtonSaleDelete(ActionEvent e) {
 
-		try {
-
-			if (selectSale.equals(null)) {
-
-			}
-
-		} catch (Exception e2) {
-
-			AlertMessage.alertWarningDisplay(1, "삭제 오류", "삭제 오류입니다.", "항목을 선택하지 않았습니다.");
-			e2.printStackTrace();
+		if (selectSale == null) {
+			AlertManager.getInstance().show(AlertType.ERROR, "에러", "항목을 선택해주세요.", null);
 			return;
-
 		}
 
 		try {
 
 			saleDAO = new SaleDAO();
-
-			AlertMessage.alertWarningDisplay(5, "삭제 주의", "삭제하시겠습니까?", "삭제하시겠습니까?");
-			// alert메세지의 버튼 값을 얻어와서 확인한다.
-			if (AlertMessage.alert.getResult() == ButtonType.OK) {
-
+			
+			AlertManager.getInstance().show(AlertType.CONFIRMATION, "항목 삭제", "선택한 항목을 삭제하시겠습니까?", buttonType -> {
+				if (buttonType != ButtonType.OK) {
+					return;
+				}
+				
 				int i = saleDAO.deleteSale(selectSale);
 
 				if (i == 1) {
-
-					AlertMessage.alertWarningDisplay(1, "삭제 완료", "삭제 완료", "삭제 완료");
+					
+					AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
 
 					// 삭제후 날짜 값은 선택했던 값 그대로를 유지 해야 하므로 현재의 값을 얻어와 다시 테이블뷰를 세팅한다.
 					localDate = datePicker.getValue();
@@ -547,16 +538,14 @@ public class MainController implements Initializable {
 					barChartSetting();
 
 				} else {
-
-					AlertMessage.alertWarningDisplay(1, "삭제 오류", "삭제 오류", "삭제 오류");
+					AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
 
 				}
 
-			}
-
+			});
+			
 		} catch (Exception e2) {
-
-			AlertMessage.alertWarningDisplay(1, "오류", "오류입니다.", "다시 확인 해 주세요.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
 			e2.printStackTrace();
 
 		}
@@ -620,8 +609,7 @@ public class MainController implements Initializable {
 				tableView.setItems(list);
 
 			} catch (Exception e2) {
-
-				AlertMessage.alertWarningDisplay(1, "오류", "오류 입니다.", "다시 시도 해 주세요.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
 				e2.printStackTrace();
 
 			}
@@ -673,7 +661,7 @@ public class MainController implements Initializable {
 
 					goodsDVO.insertGoodsDB(insertGoods);
 
-					AlertMessage.alertWarningDisplay(1, "메뉴 등록 성공", "메뉴 등록 성공", "메뉴를 등록했습니다.");
+					AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
 
 				});
 
@@ -688,8 +676,7 @@ public class MainController implements Initializable {
 				dialMenuAddStage.show();
 
 			} catch (Exception e2) {
-
-				AlertMessage.alertWarningDisplay(1, "오류", "오류 입니다.", "다시 확인 해 주세요.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
 				e2.printStackTrace();
 
 			}
@@ -746,7 +733,7 @@ public class MainController implements Initializable {
 					try {
 						goodsDVO = new GoodsDAO();
 
-						if (tfEditGoods.getPromptText().equals(null)) {
+						if (tfEditGoods.getPromptText() == null) {
 
 							goodsDVO.updateGoods(selectMenuEditGoodsVO, tfEditGoods.getText(),
 									Integer.parseInt(tfEditPrice.getText()));
@@ -758,7 +745,7 @@ public class MainController implements Initializable {
 						}
 					} catch (Exception e3) {
 						e3.printStackTrace();
-						AlertMessage.alertWarningDisplay(1, "오류", "수정 오류 입니다.", "다시 확인 해주세요.");
+						AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
 					}
 
 				}); // end of btEditOk
@@ -779,7 +766,7 @@ public class MainController implements Initializable {
 						dialogEditStage.close();
 					} catch (Exception e3) {
 						e3.printStackTrace();
-						AlertMessage.alertWarningDisplay(1, "오류", "뒤로가기 오류 입니다.", "다시 확인 해 주세요.");
+						AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
 					}
 				}); // end of btEditBack
 
@@ -789,7 +776,7 @@ public class MainController implements Initializable {
 
 			} catch (Exception e3) {
 
-				AlertMessage.alertWarningDisplay(1, "오류", "오류 입니다.", "다시 확인 해 주세요.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
 				e3.printStackTrace();
 
 			}
@@ -804,36 +791,28 @@ public class MainController implements Initializable {
 		 */
 		btEditDelete.setOnAction(e1 -> {
 
-			try {
+			goodsDVO = new GoodsDAO();
 
-				goodsDVO = new GoodsDAO();
-
-				AlertMessage.alertWarningDisplay(5, "삭제 주의", "삭제하시겠습니까?", "삭제하시겠습니까?");
-
-				if (AlertMessage.alert.getResult() == ButtonType.OK) {
-
-					int i = goodsDVO.deleteGoods(selectMenuEditGoodsVO.getGoods());
-					System.out.println(selectMenuEditGoodsVO.getGoods());
-
-					if (i == 1) {
-
-						AlertMessage.alertWarningDisplay(1, "삭제 완료", "삭제 완료", "삭제 완료");
-
-					} else {
-
-						AlertMessage.alertWarningDisplay(1, "삭제 오류", "삭제 오류", "잘못 된 삭제입니다. 다시 확인 해 주세요.");
-
-					}
-
+			AlertManager.getInstance().show(AlertType.CONFIRMATION, "항목 삭제", "선택한 항목을 삭제하시겠습니까?", buttonType -> {
+				if (buttonType != ButtonType.OK) {
+					return;
 				}
 
-			} catch (Exception e2) {
+				try {
+					int i = goodsDVO.deleteGoods(selectMenuEditGoodsVO.getGoods());
+					System.out.println(selectMenuEditGoodsVO.getGoods());
+					if (i == 1) {
+						AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
 
-				AlertMessage.alertWarningDisplay(1, "오류", "삭제 오류입니다.", "다시 확인 해 주세요.");
-				e2.printStackTrace();
+					} else {
+						AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
+					}
 
-			}
-
+				} catch (Exception e2) {
+					AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
+					e2.printStackTrace();
+				}
+			});
 		}); // end of btEditDelete
 		/*****************
 		 * 2019 10 월 18 일 작성자 : 심재현
@@ -886,8 +865,7 @@ public class MainController implements Initializable {
 		list = goodsDVO.getGoodsTotal();
 
 		if (list == null) {
-
-			AlertMessage.alertWarningDisplay(1, "empty", "empty", "empty");
+			AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
 			return;
 
 		}

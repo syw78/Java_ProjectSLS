@@ -4,7 +4,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
+import util.AlertManager;
+import util.AlertManager.AlertInfo;
 import util.SceneLoader;
 
 public class AppMain extends Application {
@@ -17,7 +20,7 @@ public class AppMain extends Application {
 		primaryStage.setTitle("LoginWindow");
 		primaryStage.setScene(scene);
 		primaryStage.show();
-
+		
 	}
 
 	public static void main(String[] args) {

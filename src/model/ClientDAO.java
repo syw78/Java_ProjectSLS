@@ -6,8 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import util.AlertMessage;
+import util.AlertManager;
 import util.DBUtil;
+import util.AlertManager.AlertInfo;
 
 public class ClientDAO {
 
@@ -32,7 +33,7 @@ public class ClientDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "회원 정보를 저장하는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 
 			try {
@@ -42,7 +43,7 @@ public class ClientDAO {
 					con.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 중 에러가 발생했습니다.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 
 		}
@@ -73,7 +74,7 @@ public class ClientDAO {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "회원 ID 를 확인 하는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 			try {
 				if (rs != null)
@@ -84,7 +85,7 @@ public class ClientDAO {
 					con.close();
 			} catch (SQLException se) {
 				se.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 중 에러가 발생했습니다.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
 
@@ -116,12 +117,12 @@ public class ClientDAO {
 		} catch (SQLException e) {
 
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "회원 정보를 불러오는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			
 		} finally {
 

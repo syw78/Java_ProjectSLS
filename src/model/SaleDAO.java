@@ -7,8 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javafx.collections.ObservableList;
-import util.AlertMessage;
+import util.AlertManager;
 import util.DBUtil;
+import util.AlertManager.AlertInfo;
 
 public class SaleDAO {
 
@@ -35,7 +36,7 @@ public class SaleDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "판매 목록을 저장하는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 
 			try {
@@ -45,7 +46,7 @@ public class SaleDAO {
 					con.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 중 에러가 발생했습니다.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 
 		}
@@ -73,7 +74,7 @@ public class SaleDAO {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "전체 판매 목록을 불러오는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 			try {
 				if (rs != null)
@@ -84,7 +85,7 @@ public class SaleDAO {
 					con.close();
 			} catch (SQLException se) {
 				se.printStackTrace();
-				AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 중 에러가 발생했습니다.");
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
 		return list;
@@ -110,7 +111,7 @@ public class SaleDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "판매 목록을 지우는 도중 에러입니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 			try {
 				// ⑥ 데이터베이스와의 연결에 사용되었던 오브젝트를 해제
@@ -120,7 +121,7 @@ public class SaleDAO {
 					con.close();
 			} catch (SQLException e) {
 				 e.printStackTrace();
-				 AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "데이터 베이스 접속 에러입니다.");
+				 AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
 
@@ -155,7 +156,7 @@ public class SaleDAO {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			AlertMessage.alertWarningDisplay(1, "에러", "에러 입니다.", "날짜로 목록을 검색하는 도중 에러가 발생했습니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		}
 		
 		
@@ -187,7 +188,7 @@ public class SaleDAO {
 			}
 			System.out.println(list.toString());
 		} catch (Exception e) {
-			AlertMessage.alertWarningDisplay(1, "에러", "에러입니다.", "전체 품목을 불러오는 도중 에러입니다.");
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			e.printStackTrace();
 		}
 		return list;
