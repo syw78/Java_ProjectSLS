@@ -2,18 +2,13 @@ package util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DBUtil {
-
-	private static String driver = "com.mysql.jdbc.Driver";
 	private static String url = "jdbc:mysql://localhost/client";
 
-	public static Connection getConnection() throws Exception {
-
-		Class.forName(driver);
+	public static Connection getConnection() throws SQLException {
 		Connection connection = DriverManager.getConnection(url, "root", "1234");
-
 		return connection;
-
 	}
 }

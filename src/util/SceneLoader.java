@@ -15,67 +15,31 @@ public class SceneLoader {
 		return shared;
 	}
 
-	public Scene makeLoginScene() {
-		try {
-			return new Scene(FXMLLoader.load(getClass().getResource("/view/login.fxml")));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public Scene makeLoginScene() throws IOException {
+		return new Scene(FXMLLoader.load(getClass().getResource("/view/login.fxml")));
 	}
 
-	public Scene makeMainScene() {
-		try {
-			return new Scene(FXMLLoader.load(getClass().getResource("/view/main.fxml")));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-
+	public Scene makeMainScene() throws IOException {
+		return new Scene(FXMLLoader.load(getClass().getResource("/view/main.fxml")));
 	}
 
-	public Scene makeMenuAddScene() {
-		try {
-			return new Scene(FXMLLoader.load(getClass().getResource("/view/menuadd.fxml")));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public Scene makeMenuAddScene() throws IOException {
+		return new Scene(FXMLLoader.load(getClass().getResource("/view/menuadd.fxml")));
 	}
 
-	public Scene makeMenuCheckScene() {
-		try {
-			return new Scene(FXMLLoader.load(getClass().getResource("/view/menucheck.fxml")));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public Scene makeMenuCheckScene() throws IOException {
+		return new Scene(FXMLLoader.load(getClass().getResource("/view/menucheck.fxml")));
 	}
 
-	public Scene makeMenuEditScene() {
-		try {
-			return new Scene(FXMLLoader.load(getClass().getResource("/view/menuedit.fxml")));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public Scene makeMenuEditScene() throws IOException {
+		return new Scene(FXMLLoader.load(getClass().getResource("/view/menuedit.fxml")));
 	}
 
-	public Scene makeSaleAddScene() {
-		try {
-			return new Scene(FXMLLoader.load(getClass().getResource("/view/saleadd.fxml")));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public Scene makeSaleAddScene() throws IOException {
+		return new Scene(FXMLLoader.load(getClass().getResource("/view/saleadd.fxml")));
 	}
 
-	public Scene makeSignUpAddScene() {
-		try {
-			return new Scene(FXMLLoader.load(getClass().getResource("/view/signup.fxml")));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public Scene makeSignUpAddScene() throws IOException {
+		return new Scene(FXMLLoader.load(getClass().getResource("/view/signup.fxml")));
 	}
 }

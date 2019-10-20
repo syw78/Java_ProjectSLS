@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import util.AlertManager;
 import util.AlertManager.AlertInfo;
@@ -12,138 +13,58 @@ import util.DBUtil;
 
 public class ClientDAO {
 
-	public void insertClientDB(ClientVO cvo) {
+	public void insertClientDB(ClientVO cvo) throws SQLException {
 
 		String dml = "insert into clientdb " + "(id,password,name,phone)" + " values " + "(?,?,?,?)";
 
-		Connection con = null;
-		PreparedStatement pstmt = null;
+		try (Connection connection = DBUtil.getConnection();
+				PreparedStatement statement = connection.prepareStatement(dml);) {
+			
+			statement.setString(1, cvo.getId());
+			statement.setString(2, cvo.getPassword());
+			statement.setString(3, cvo.getName());
+			statement.setString(4, cvo.getPhone());
 
-		try {
-
-			con = DBUtil.getConnection();
-
-			pstmt = con.prepareStatement(dml);
-			pstmt.setString(1, cvo.getId());
-			pstmt.setString(2, cvo.getPassword());
-			pstmt.setString(3, cvo.getName());
-			pstmt.setString(4, cvo.getPhone());
-
-			pstmt.execute();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-		} finally {
-
-			try {
-				if (pstmt != null)
-					pstmt.close();
-				if (con != null)
-					con.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-			}
-
+			statement.execute();
 		}
 
 	} // end of insertClientDB
 
-	public ArrayList<ClientVO> getClientCheck(ClientVO cvo) throws Exception {
+	public ArrayList<ClientVO> getClientCheck(ClientVO cvo) throws SQLException {
 
 		String dml = "select * from clientdb where id = ?";
-
-		ArrayList<ClientVO> clientList = new ArrayList<ClientVO>();
-
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		ClientVO clientVo = null;
 		String name2 = cvo.getId();
 
-		try {
-			con = DBUtil.getConnection();
-			pstmt = con.prepareStatement(dml);
-			pstmt.setString(1, name2);
-			rs = pstmt.executeQuery();
-			while (rs.next()) {
-				clientVo = new ClientVO(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
-				clientList.add(clientVo);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (pstmt != null)
-					pstmt.close();
-				if (con != null)
-					con.close();
-			} catch (SQLException se) {
-				se.printStackTrace();
-				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
+		try (Connection connection = DBUtil.getConnection();
+				PreparedStatement statement = connection.prepareStatement(dml);) {
+			statement.setString(1, name2);
+			
+			try (ResultSet resultSet = statement.executeQuery();) {
+				return getClientInfoFromResultSet(resultSet);
 			}
 		}
-
-		return clientList;
-
-	} // end of getClientCheck
-
-	public ArrayList<ClientVO> getClientInfo() {
-
-		String dml = "select * from clientdb";
-		ArrayList<ClientVO> clientList = new ArrayList<ClientVO>();
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		ClientVO clientVo = null;
-
-		try {
-
-			con = DBUtil.getConnection();
-			pstmt = con.prepareStatement(dml);
-			rs = pstmt.executeQuery();
-			while (rs.next()) {
-
-				clientVo = new ClientVO(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
-				clientList.add(clientVo);
-
-			}
-
-		} catch (SQLException e) {
-
-			e.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-
-		} finally {
-
-			try {
-
-				if (rs != null)
-					rs.close();
-
-				if (pstmt != null)
-					pstmt.close();
-
-				if (con != null)
-					con.close();
-
-			} catch (SQLException se) {
-
-			}
-		}
-
-		return clientList;
-
 	}
 
+	public ArrayList<ClientVO> getClientInfo() throws SQLException {
+
+		String dml = "select * from clientdb";
+		
+		try (Connection connection = DBUtil.getConnection();
+				PreparedStatement statement = connection.prepareStatement(dml);
+				ResultSet resultSet = statement.executeQuery();) {
+			return getClientInfoFromResultSet(resultSet);
+		}
+	}
+	
+	private ArrayList<ClientVO> getClientInfoFromResultSet(ResultSet resultSet) throws SQLException {
+		ArrayList<ClientVO> clientList = new ArrayList<ClientVO>();
+		while (resultSet.next()) {
+			ClientVO client = new ClientVO(resultSet.getString(1), 
+					resultSet.getString(2), 
+					resultSet.getString(3), 
+					resultSet.getString(4));
+			clientList.add(client);
+		}
+		return clientList;
+	}
 }

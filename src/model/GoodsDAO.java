@@ -8,258 +8,95 @@ import java.util.ArrayList;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import util.AlertManager;
-import util.AlertManager.AlertInfo;
 import util.DBUtil;
 
 public class GoodsDAO {
 
-	public void insertGoodsDB(GoodsVO goodsVO) {
-
+	public void insertGoodsDB(GoodsVO goodsVO) throws SQLException {
 		String dml = "insert into goodsTBL (goods, price) values (?,?)";
 
-		Connection con = null;
-		PreparedStatement pstmt = null;
-
-		try {
-
-			con = DBUtil.getConnection();
-
-			pstmt = con.prepareStatement(dml);
-			pstmt.setString(1, goodsVO.getGoods());
-			pstmt.setInt(2, goodsVO.getPrice());
-
-			pstmt.execute();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-		} finally {
-
-			try {
-				if (pstmt != null)
-					pstmt.close();
-				if (con != null)
-					con.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-			}
-
+		try (Connection connection = DBUtil.getConnection();
+				PreparedStatement statement = connection.prepareStatement(dml);) {
+			statement.setString(1, goodsVO.getGoods());
+			statement.setInt(2, goodsVO.getPrice());
+			statement.execute();
 		}
+	}
+	
+	public ArrayList<GoodsVO> getGoodsTotal() throws SQLException {
 
-	} // end of insertGoodsDB
-
-	public ArrayList<GoodsVO> getGoodsTotal() {
-
-		ArrayList<GoodsVO> list = new ArrayList<GoodsVO>();
+		ArrayList<GoodsVO> goodsList = new ArrayList<GoodsVO>();
 
 		String dml = "select * from goodsTBL";
-
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		GoodsVO goodsVO = null;
-
-		try {
-
-			con = DBUtil.getConnection();
-			pstmt = con.prepareStatement(dml);
-			rs = pstmt.executeQuery();
-
-			while (rs.next()) {
-
-				goodsVO = new GoodsVO(rs.getString(1), rs.getInt(2));
-				list.add(goodsVO);
-
-			}
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-
-		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (pstmt != null)
-					pstmt.close();
-				if (con != null)
-					con.close();
-			} catch (SQLException se) {
-				se.printStackTrace();
-				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
+		
+		try (Connection connection = DBUtil.getConnection();
+				PreparedStatement statement = connection.prepareStatement(dml);
+				ResultSet resultSet = statement.executeQuery();) {
+			while (resultSet.next()) {
+				GoodsVO goods = new GoodsVO(resultSet.getString(1), resultSet.getInt(2));
+				goodsList.add(goods);
 			}
 		}
-
-		return list;
-
-	} // end of getGoodsTotal
-
-	public int deleteGoods(String goods) throws Exception {
+		
+		return goodsList;
+	}
+	
+	public boolean deleteGoods(String goods) throws SQLException {
 
 		String dml = "delete from goodsTBL where goods = ?";
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		int i = 0;
 
-		try {
-
-			con = DBUtil.getConnection();
-
-			pstmt = con.prepareStatement(dml);
-			pstmt.setString(1, goods);
-
-			i = pstmt.executeUpdate();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-		} finally {
-			try {
-				// ⑥ 데이터베이스와의 연결에 사용되었던 오브젝트를 해제
-				if (pstmt != null)
-					pstmt.close();
-				if (con != null)
-					con.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-			}
+		try (Connection connection = DBUtil.getConnection();
+				PreparedStatement statement = connection.prepareStatement(dml);) {
+			statement.setString(1, goods);
+			return statement.executeUpdate() > 0;
 		}
-
-		return i;
-
-	} // end of deleteGoods
-
-	public void updateGoods(GoodsVO goodsVO, String goods, int price) {
+	}
+	
+	public boolean updateGoods(GoodsVO goodsVO, String goods, int price) throws SQLException {
 
 		String dml = "update goodsTBL set goods = ?, price = ? where goods = ?";
-
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		GoodsVO returnGoodsVO = null;
-
-		try {
-
-			con = DBUtil.getConnection();
-
-			pstmt = con.prepareStatement(dml);
-			pstmt.setString(1, goods);
-			pstmt.setInt(2, price);
-			pstmt.setString(3, goodsVO.getGoods());
-
-			int check = pstmt.executeUpdate();
-
-			if (check == 1) {
-				AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
-			} else {
-				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-		} finally {
-			try {
-				if (pstmt != null)
-					pstmt.close();
-				if (con != null)
-					con.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-
-			}
+		
+		try (Connection connection = DBUtil.getConnection();
+				PreparedStatement statement = connection.prepareStatement(dml);) {
+			statement.setString(1, goods);
+			statement.setInt(2, price);
+			statement.setString(3, goodsVO.getGoods());
+			
+			return statement.executeUpdate() > 0;
 		}
-
-		return;
-
 	}
 
-	public void updateOnlyPrice(GoodsVO goodsVO, int price) {
+	public boolean updateOnlyPrice(GoodsVO goodsVO, int price) throws SQLException {
 
 		String dml = "update goodsTBL set price = ? where goods = ?";
 
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		GoodsVO returnGoodsVO = null;
-
-		try {
-
-			con = DBUtil.getConnection();
-
-			pstmt = con.prepareStatement(dml);
-			pstmt.setInt(1, price);
-			pstmt.setString(2, goodsVO.getGoods());
-
-			int check = pstmt.executeUpdate();
-
-			if (check == 1) {
-				AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
-			} else {
-				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-		} finally {
-			try {
-				// ⑥ 데이터베이스와의 연결에 사용되었던 오브젝트를 해제
-				if (pstmt != null)
-					pstmt.close();
-				if (con != null)
-					con.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-			}
+		try (Connection connection = DBUtil.getConnection();
+				PreparedStatement statement = connection.prepareStatement(dml);) {
+			statement.setInt(1, price);
+			statement.setString(2, goodsVO.getGoods());
+			
+			return statement.executeUpdate() > 0;
 		}
-
-		return;
-
 	}
 
-	public ObservableList<GoodsVO> getCheckGoods(String goods) throws Exception {
+	public ObservableList<GoodsVO> getCheckGoods(String goods) throws SQLException {
 
 		String dml = "select * from goodsTBL where goods like ?";
-		ObservableList<GoodsVO> list = FXCollections.observableArrayList();
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		GoodsVO returnGoods = null;
-		String likeGoods = "%" + goods + "%";
-
-		try {
-			con = DBUtil.getConnection();
-			pstmt = con.prepareStatement(dml);
-			pstmt.setString(1, likeGoods);
-			rs = pstmt.executeQuery();
-
-			while (rs.next()) {
-				returnGoods = new GoodsVO(rs.getString(1), rs.getInt(2));
-				list.add(returnGoods);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
-		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (pstmt != null)
-					pstmt.close();
-				if (con != null)
-					con.close();
-			} catch (SQLException se) {
-				se.printStackTrace();
-				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
+		
+		ObservableList<GoodsVO> goodsList = FXCollections.observableArrayList();
+		
+		try (Connection connection = DBUtil.getConnection();
+				PreparedStatement statement = connection.prepareStatement(dml);) {
+			String likeGoods = "%" + goods + "%";
+			statement.setString(1, likeGoods);
+			
+			try (ResultSet resultSet = statement.executeQuery();) {
+				while (resultSet.next()) {
+					GoodsVO aGoods = new GoodsVO(resultSet.getString(1), resultSet.getInt(2));
+					goodsList.add(aGoods);
+				}
 			}
 		}
-		return list;
+		return goodsList;
 	}
-
 }
