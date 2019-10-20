@@ -61,7 +61,9 @@ public class MainController implements Initializable {
 	private BarChart<String, Integer> barChart;
 
 	/********************
-	 * 기능 : 필요한 saleVO 모델의 변수 2019 10 월 18 일 작성자 : 심재현
+	 * 기능 : 필요한 saleVO 모델의 변수 2019 10 월 18 일
+	 * 
+	 * 작성자 : 심재현
 	 * 
 	 */
 	private ObservableList<SaleVO> saleVOList = FXCollections.observableArrayList();
@@ -77,7 +79,9 @@ public class MainController implements Initializable {
 	private String saveGoodsString = null;
 
 	/*******************************
-	 * 기능 : 필요한 goodsVO의 변수들 2019 10 월 18 일 작성자 : 심재현
+	 * 기능 : 필요한 goodsVO의 변수들 2019 10 월 18 일
+	 * 
+	 * 작성자 : 심재현
 	 * 
 	 */
 	private ArrayList<GoodsVO> goodsList = new ArrayList<GoodsVO>();
@@ -89,7 +93,9 @@ public class MainController implements Initializable {
 	private GoodsVO selectMenuEditGoodsVO = null;
 
 	/**********************************
-	 * 기능 : 필요한 그 외의 변수들 2019 10 월 18 일 작성자 : 심재현
+	 * 기능 : 필요한 그 외의 변수들 2019 10 월 18 일
+	 * 
+	 * 작성자 : 심재현
 	 * 
 	 */
 	private LocalDate localDate = null;
@@ -175,7 +181,7 @@ public class MainController implements Initializable {
 
 			tableView.setItems(dateSelectList);
 
-			barChartSetting();
+			barChartSetting(dateSelectList);
 
 		} catch (Exception e1) {
 
@@ -186,9 +192,9 @@ public class MainController implements Initializable {
 	} // end of handlerDatePicker
 
 	/**************************
-	 * 기능 : 등록 버튼을 누르면 등록 창을 연다. 2019 10월 18 일 handlerButtonSaleAddAction 메소드 작성자 :
-	 * 심재현
+	 * 기능 : 등록 버튼을 누르면 등록 창을 연다. 2019 10월 18 일
 	 * 
+	 * 작성자 :심재현
 	 */
 	private void handlerButtonSaleAddAction(ActionEvent e) {
 
@@ -498,7 +504,9 @@ public class MainController implements Initializable {
 	} // end of handlerButtonSaleAddAction
 
 	/************************************
-	 * 기능 : 버튼을 누르면 항목을 지운다. 2019 10 월 18 일 작성자 : 심재현
+	 * 기능 : 버튼을 누르면 항목을 지운다. 2019 10 월 18 일
+	 * 
+	 * 작성자 : 심재현
 	 * 
 	 */
 	private void handlerButtonSaleDelete(ActionEvent e) {
@@ -508,51 +516,45 @@ public class MainController implements Initializable {
 			return;
 		}
 
-		try {
+		saleDAO = new SaleDAO();
 
-			saleDAO = new SaleDAO();
+		AlertManager.getInstance().show(AlertType.CONFIRMATION, "항목 삭제", "선택한 항목을 삭제하시겠습니까?", buttonType -> {
+			if (buttonType != ButtonType.OK) {
+				return;
+			}
 
-			AlertManager.getInstance().show(AlertType.CONFIRMATION, "항목 삭제", "선택한 항목을 삭제하시겠습니까?", buttonType -> {
-				if (buttonType != ButtonType.OK) {
-					return;
-				}
+			int i = saleDAO.deleteSale(selectSale);
 
-				int i = saleDAO.deleteSale(selectSale);
+			if (i == 1) {
 
-				if (i == 1) {
+				AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
 
-					AlertManager.getInstance().show(AlertInfo.SUCCESS_TASK, null);
+				// 삭제후 날짜 값은 선택했던 값 그대로를 유지 해야 하므로 현재의 값을 얻어와 다시 테이블뷰를 세팅한다.
+				localDate = datePicker.getValue();
+				String localDateStr = localDate.getYear() + "-" + localDate.getMonthValue() + "-"
+						+ localDate.getDayOfMonth();
 
-					// 삭제후 날짜 값은 선택했던 값 그대로를 유지 해야 하므로 현재의 값을 얻어와 다시 테이블뷰를 세팅한다.
-					localDate = datePicker.getValue();
-					String localDateStr = localDate.getYear() + "-" + localDate.getMonthValue() + "-"
-							+ localDate.getDayOfMonth();
+				saleDAO = new SaleDAO();
+				searchDateSaleVO = saleDAO.getListToDate(localDateStr);
+				saleVOList.removeAll(saleVOList);
+				ObservableList<SaleVO> list2 = FXCollections.observableArrayList(searchDateSaleVO);
+				tableView.setItems(list2);
 
-					saleDAO = new SaleDAO();
-					searchDateSaleVO = saleDAO.getListToDate(localDateStr);
-					saleVOList.removeAll(saleVOList);
-					ObservableList<SaleVO> list2 = FXCollections.observableArrayList(searchDateSaleVO);
-					tableView.setItems(list2);
+				barChartSetting(list2);
 
-					barChartSetting();
+			} else {
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
 
-				} else {
-					AlertManager.getInstance().show(AlertInfo.ERROR_TASK, null);
+			}
 
-				}
-
-			});
-
-		} catch (Exception e2) {
-			AlertManager.getInstance().show(AlertInfo.ERROR_UNKNOWN, null);
-			e2.printStackTrace();
-
-		}
+		});
 
 	} // end of handlerButtonSaleDelete
 
 	/***************************
-	 * 기능 : 버튼을 누르면 메뉴 확인 다이얼로그 창을 띄운다. 2019 10 월 18 일 작성자 : 심재현
+	 * 기능 : 버튼을 누르면 메뉴 확인 다이얼로그 창을 띄운다. 2019 10 월 18 일
+	 * 
+	 * 작성자 : 심재현
 	 * 
 	 */
 	private void handlerButtonMenuCheck(ActionEvent e) {
@@ -592,10 +594,9 @@ public class MainController implements Initializable {
 		tableView.getColumns().addAll(columnGoods, columnPrice);
 
 		/*******************
-		 * 2019 10 월 18 일 작성자 : 심재현
+		 * 기능 : 검색버튼 2019 10 월 18 일
 		 * 
-		 * 기능 : 검색버튼
-		 * 
+		 * 작성자 : 심재현
 		 */
 		btSearch.setOnAction(e1 -> {
 
@@ -616,10 +617,9 @@ public class MainController implements Initializable {
 		}); // end of btSearch
 
 		/**********************
-		 * 2019 10 월 18 일 작성자 : 심재현
+		 * 기능 : 테이블뷰 새로 고침 버튼 2019 10 월 18 일
 		 * 
-		 * 기능 : 테이블뷰 새로 고침 버튼
-		 * 
+		 * 작성자 : 심재현
 		 */
 		btMenuRefresh.setOnAction(e1 -> {
 
@@ -631,10 +631,9 @@ public class MainController implements Initializable {
 		});
 
 		/******************************
-		 * 2019 10 월 18 일 작성자 : 심재현
+		 * 기능 : 메뉴를 등록한다. 2019 10 월 18 일
 		 * 
-		 * 기능 : 메뉴를 등록한다.
-		 * 
+		 * 작성자 : 심재현
 		 */
 		btAdd.setOnAction(e1 -> {
 
@@ -852,7 +851,9 @@ public class MainController implements Initializable {
 	} // end of handlerButtonSaleTotalPrice
 
 	/************************************
-	 * 기능 : 데이터 베이스에 저장된 goodsVO 정보를 모두 불러온다. 2019 10 월 18 일 작성자 : 심재현
+	 * 기능 : 데이터 베이스에 저장된 goodsVO 정보를 모두 불러온다. 2019 10 월 18 일
+	 * 
+	 * 작성자 : 심재현
 	 * 
 	 */
 
@@ -924,12 +925,15 @@ public class MainController implements Initializable {
 
 	/************************
 	 * 
-	 * 기능 : 바 차트에 내용 표시 2019 10 월 19 일
+	 * 기능 : 바 차트에 내용 표시 2019 10 월 19 일 수정 : 2019 10 월 20 일 심재현 수정 내용 : 해당
+	 * ObservableList 를 받아서 차트를 보여준다.
 	 * 
 	 * 작성자 : 심재현
 	 * 
+	 * @param dateSelectList2
+	 * 
 	 */
-	private void barChartSetting() {
+	private void barChartSetting(ObservableList<SaleVO> observableList) {
 
 		ObservableList<XYChart.Data<String, Integer>> barChartList = FXCollections.observableArrayList();
 		XYChart.Series<String, Integer> series = new XYChart.Series<>();
@@ -942,9 +946,9 @@ public class MainController implements Initializable {
 
 		}
 
-		dateSelectList = dateSelectList.sorted();
+		observableList = observableList.sorted();
 
-		for (int i = 0; i < dateSelectList.size(); i++) {
+		for (int i = 0; i < observableList.size(); i++) {
 
 			barChartList.add(new XYChart.Data<String, Integer>(dateSelectList.get(i).getGoods(),
 					(dateSelectList.get(i).getTotal())));
@@ -957,6 +961,8 @@ public class MainController implements Initializable {
 		series.setName(localDateStr);
 		series.setData(barChartList);
 		barChart.getData().add(series);
+
+		System.out.println(observableList.toString());
 
 	} // end of barChartSetting
 
