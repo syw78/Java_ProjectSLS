@@ -2,21 +2,54 @@ package model;
 
 public class GoodsVO {
 
-	private String goods;
+	private int no;
+	private String client;
+	private String goodsName;
 	private int price;
-
-	public GoodsVO(String goods, int price) {
+	
+	public GoodsVO(String goodsName, int price) {
 		super();
-		this.goods = goods;
+		this.goodsName = goodsName;
 		this.price = price;
 	}
 
-	public String getGoods() {
-		return goods;
+	public GoodsVO(String client, String goodsName, int price) {
+		super();
+		this.client = client;
+		this.goodsName = goodsName;
+		this.price = price;
 	}
 
-	public void setGoods(String goods) {
-		this.goods = goods;
+	public GoodsVO(int no, String client, String goodsName, int price) {
+		super();
+		this.no = no;
+		this.client = client;
+		this.goodsName = goodsName;
+		this.price = price;
+	}
+	
+	public int getNo() {
+		return no;
+	}
+
+	public void setNo(int no) {
+		this.no = no;
+	}
+
+	public String getClient() {
+		return client;
+	}
+
+	public void setClient(String client) {
+		this.client = client;
+	}
+
+	public String getGoodsName() {
+		return goodsName;
+	}
+
+	public void setGoodsName(String goodsName) {
+		this.goodsName = goodsName;
 	}
 
 	public int getPrice() {
@@ -29,7 +62,7 @@ public class GoodsVO {
 
 	@Override
 	public String toString() {
-		return "GoodsVO [goods=" + goods + ", price=" + price + "]";
+		return "GoodsVO [goodsName=" + goodsName + ", price=" + price + "]";
 	}
 
 }

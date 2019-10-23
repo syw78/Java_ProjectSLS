@@ -39,6 +39,8 @@ public class LoginController implements Initializable {
 
 	private ClientDAO clientDVO;
 	private ArrayList<ClientVO> clientList = new ArrayList<ClientVO>();
+	
+	public static String clientId = null;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -59,9 +61,11 @@ public class LoginController implements Initializable {
 
 		} else if ((tfId.getText().equals("admin") && tfPassword.getText().equals("1234"))
 				|| (checkId(tfId.getText(), clientList) && checkPassword(tfPassword.getText(), clientList))) {
-
+			clientId = tfId.getText();
 			Stage mainStage = null;
-
+			
+			clientId = tfId.getText();
+			
 			try {
 
 				Scene scene = SceneLoader.getInstance().makeMainScene();
@@ -71,13 +75,13 @@ public class LoginController implements Initializable {
 				mainStage.setResizable(false);
 
 				((Stage) btLogin.getScene().getWindow()).close();
-
+				
 				mainStage.show();
 
 			} catch (IOException e) {
 				AlertManager.getInstance().show(AlertInfo.ERROR_LOAD_SCENE, null);
 			}
-
+			
 		} else {
 			AlertManager.getInstance().show(AlertInfo.FAIL_LOGIN, null);
 		}
@@ -126,6 +130,7 @@ public class LoginController implements Initializable {
 
 						if (duplicateCheckId(cvo.getId(), clientList) || clientList == null) {
 							clientDVO.insertClientDB(cvo);
+							initSetting();
 							AlertManager.getInstance().show(AlertInfo.SUCCESS_SIGNUP, buttonType -> {
 								dialogStage.close();
 							});
@@ -167,6 +172,7 @@ public class LoginController implements Initializable {
 
 		try {
 			clientList = clientDVO.getClientInfo();	
+			System.out.println(clientList.toString());
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);

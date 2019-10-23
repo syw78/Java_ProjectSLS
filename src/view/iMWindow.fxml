@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.web.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<TabPane prefHeight="600.0" prefWidth="1000.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
+   <tabs>
+      <Tab text="매출 관리" />
+      <Tab fx:id="tabInventoryManagement" text="재고 관리">
+         <content>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <HBox prefHeight="43.0" prefWidth="900.0">
+                     <children>
+                        <TextField fx:id="textFieldIMSearch" prefHeight="30.0" prefWidth="170.0">
+                           <HBox.margin>
+                              <Insets bottom="15.0" left="10.0" right="5.0" top="15.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <Button fx:id="buttonIMSearch" mnemonicParsing="false" prefHeight="30.0" prefWidth="50.0" text="검색" textFill="#0008ff">
+                           <HBox.margin>
+                              <Insets bottom="15.0" right="5.0" top="15.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="buttonIMSearchAll" mnemonicParsing="false" prefHeight="30.0" prefWidth="50.0" text="전체" textFill="#0008ff">
+                           <HBox.margin>
+                              <Insets bottom="15.0" right="5.0" top="15.0" />
+                           </HBox.margin>
+                        </Button>
+                        <DatePicker fx:id="datePickerIMSelect">
+                           <HBox.margin>
+                              <Insets bottom="15.0" top="15.0" />
+                           </HBox.margin>
+                        </DatePicker>
+                        <Label alignment="CENTER" text="입출고 재고현황" textFill="#0008ff">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="200.0" top="20.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="420.0" prefWidth="1000.0">
+                     <children>
+                        <TableView fx:id="iMtableView" prefHeight="420.0" prefWidth="511.0">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </TableView>
+                        <StackedBarChart fx:id="stackedBarChartIMChart" animated="false" prefHeight="340.0" prefWidth="495.0">
+                           <xAxis>
+                              <CategoryAxis side="BOTTOM" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis side="LEFT" upperBound="90.0" />
+                           </yAxis>
+                           <HBox.margin>
+                              <Insets left="10.0" right="10.0" top="15.0" />
+                           </HBox.margin>
+                        </StackedBarChart>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button fx:id="buttonIM" mnemonicParsing="false" text="재고 관리" textFill="#0008ff" />
+                        <Button fx:id="btDelete" mnemonicParsing="false" text="재고 삭제" textFill="#0008ff">
+                           <HBox.margin>
+                              <Insets left="15.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="buttonIMClose" mnemonicParsing="false" text="닫기" textFill="#0008ff">
+                           <HBox.margin>
+                              <Insets left="15.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+   </tabs>
+</TabPane>

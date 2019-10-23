@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="350.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Button id="iMOk" layoutX="76.0" layoutY="272.0" mnemonicParsing="false" text="등록" />
+      <Button id="iMClose" layoutX="167.0" layoutY="272.0" mnemonicParsing="false" text="취소" />
+      <Label layoutX="46.0" layoutY="136.0" text="품명" />
+      <TextField id="iMNum" layoutX="79.0" layoutY="197.0" />
+      <Label layoutX="46.0" layoutY="202.0" text="수량" />
+      <TextField id="iMPay" layoutX="79.0" layoutY="164.0" />
+      <Label layoutX="46.0" layoutY="169.0" text="단가" />
+      <DatePicker id="datethis" layoutX="79.0" layoutY="97.0" prefHeight="27.0" prefWidth="161.0" />
+      <Label layoutX="46.0" layoutY="102.0" text="날짜" />
+      <Label layoutX="110.0" layoutY="52.0" text="품목 추가메뉴" />
+      <ComboBox id="iMName" layoutX="80.0" layoutY="131.0" prefHeight="27.0" prefWidth="161.0" />
+   </children>
+</AnchorPane>

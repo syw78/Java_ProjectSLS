@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import util.AlertManager;
@@ -14,7 +15,7 @@ public class ClientDAO {
 
 	public void insertClientDB(ClientVO cvo) throws SQLException{
 
-		String dml = "insert into clientdb " + "(id,password,name,phone)" + " values " + "(?,?,?,?)";
+		String dml = "insert into clientTBL " + "(id,password,name,phone)" + " values " + "(?,?,?,?)";
 
 		try (Connection connection = DBUtil.getConnection();
 				PreparedStatement statement = connection.prepareStatement(dml);){
@@ -32,7 +33,7 @@ public class ClientDAO {
 
 	public ArrayList<ClientVO> getClientCheck(ClientVO cvo) throws SQLException {
 
-		String dml = "select * from clientdb where id = ?";
+		String dml = "select * from clientTBL where id = ?";
 
 		ArrayList<ClientVO> clientList = new ArrayList<ClientVO>();
 
@@ -54,7 +55,7 @@ public class ClientDAO {
 
 	public ArrayList<ClientVO> getClientInfo() throws SQLException{
 
-		String dml = "select * from clientdb";
+		String dml = "select * from clientTBL";
 		ArrayList<ClientVO> clientList = new ArrayList<ClientVO>();
 
 		try (Connection connection = DBUtil.getConnection();

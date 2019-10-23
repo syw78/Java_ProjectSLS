@@ -14,22 +14,24 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0">
                <children>
-                  <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="14.0" prefHeight="27.0" spacing="43.0">
+                  <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="14.0" prefHeight="27.0" spacing="10.0">
                      <children>
-                        <DatePicker fx:id="datePicker" editable="false" prefHeight="27.0" prefWidth="187.0">
+                        <DatePicker fx:id="datePicker" editable="false" prefHeight="27.0" prefWidth="128.0">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
                         </DatePicker>
-                        <TextField fx:id="tfGoodsName" prefHeight="27.0" prefWidth="159.0" promptText="품목 이름" />
-                        <Button fx:id="btSearch" mnemonicParsing="false" text="검색">
+                        <ComboBox fx:id="comboBox" prefHeight="27.0" prefWidth="131.0" />
+                        <TextField fx:id="tfComents" alignment="CENTER" prefHeight="27.0" prefWidth="149.0" promptText="비고(10글자 이내)" />
+                        <TextField fx:id="tfCount" alignment="CENTER" prefHeight="27.0" prefWidth="75.0" promptText="개수" />
+                        <Button fx:id="btCheck" mnemonicParsing="false" text="확인">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
                         </Button>
                      </children>
                   </HBox>
-                  <BarChart fx:id="barChart" alternativeRowFillVisible="false" animated="false" layoutX="520.0" layoutY="5.0" prefHeight="356.0" prefWidth="465.0" title="매출">
+                  <BarChart fx:id="barChart" alternativeRowFillVisible="false" animated="false" layoutX="605.0" layoutY="5.0" prefHeight="356.0" prefWidth="380.0" title="매출">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" fx:id="xCatedory" />
                     </xAxis>
@@ -39,38 +41,66 @@
                   </BarChart>
                   <VBox alignment="CENTER" layoutX="76.0" layoutY="278.0" prefWidth="130.0" spacing="12.0" />
                   <VBox alignment="CENTER" layoutX="215.0" layoutY="281.0" prefWidth="130.0" spacing="12.0" />
-                  <HBox alignment="CENTER" layoutX="15.0" layoutY="271.0" prefHeight="80.0" spacing="10.0">
+                  <HBox alignment="CENTER" layoutX="23.0" layoutY="274.0" prefHeight="80.0" spacing="10.0">
                      <children>
                         <Button fx:id="btSaleAdd" mnemonicParsing="false" text="매출 등록">
                            <font>
-                              <Font name="Arial" size="17.0" />
+                              <Font name="Arial" size="13.0" />
                            </font>
                         </Button>
                         <Button fx:id="btSaleDelete" mnemonicParsing="false" text="매출 삭제">
                            <font>
-                              <Font name="Arial" size="17.0" />
+                              <Font name="Arial" size="13.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="btSelectRowDelete" mnemonicParsing="false" text="항목 삭제">
+                           <font>
+                              <Font name="Arial" size="13.0" />
                            </font>
                         </Button>
                         <Button fx:id="btMenuCheck" mnemonicParsing="false" text="메뉴 확인">
                            <font>
-                              <Font name="Arial" size="17.0" />
+                              <Font name="Arial" size="13.0" />
                            </font>
                         </Button>
+                        <Button fx:id="btSaleTotalPrice" mnemonicParsing="false" text="총액" />
+                        <TextField fx:id="tfTotalSalePrice" alignment="CENTER" editable="false" prefHeight="33.0" prefWidth="101.0" promptText="총액" />
+                        <Button fx:id="btRemoveTable" mnemonicParsing="false" text="비우기" />
                      </children>
                   </HBox>
-                  <TableView fx:id="tableView" layoutX="15.0" layoutY="60.0" prefHeight="200.0" prefWidth="477.0" />
-                  <TextField fx:id="tfTotalSalePrice" alignment="CENTER" editable="false" layoutX="391.0" layoutY="294.0" prefHeight="33.0" prefWidth="101.0" promptText="총액" />
-                  <Button fx:id="btSaleTotalPrice" layoutX="333.0" layoutY="294.0" mnemonicParsing="false" text="총액">
-                     <font>
-                        <Font size="17.0" />
-                     </font>
-                  </Button>
+                  <TableView fx:id="tableView" layoutX="15.0" layoutY="60.0" prefHeight="200.0" prefWidth="574.0" />
                </children></AnchorPane>
       </content>
     </Tab>
     <Tab text="재고 관리">
       <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <HBox alignment="CENTER" layoutX="14.0" layoutY="7.0" spacing="20.0">
+                     <children>
+                        <TextField fx:id="textFieldIMSearch" prefHeight="27.0" prefWidth="147.0" />
+                        <Button fx:id="buttonIMSearch" mnemonicParsing="false" text="검색" />
+                        <Button fx:id="buttonIMSearchAll" mnemonicParsing="false" text="전체" />
+                        <DatePicker fx:id="datePickerIMSelect" prefHeight="27.0" prefWidth="193.0" />
+                     </children>
+                  </HBox>
+                  <TableView fx:id="iMtableView" layoutX="14.0" layoutY="47.0" prefHeight="268.0" prefWidth="490.0" />
+                  <HBox alignment="CENTER" layoutX="378.0" layoutY="325.0" spacing="30.0">
+                     <children>
+                        <Button fx:id="buttonIM" mnemonicParsing="false" text="재고 관리" />
+                        <Button fx:id="btDelete" mnemonicParsing="false" text="재고 삭제" />
+                        <Button fx:id="buttonIMClose" mnemonicParsing="false" text="닫기" />
+                     </children>
+                  </HBox>
+                  <BarChart fx:id="stackedBarChart" animated="false" layoutX="505.0" layoutY="18.0" prefHeight="296.0" prefWidth="485.0" title="재고">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" />
+                    </yAxis>
+                  </BarChart>
+               </children></AnchorPane>
       </content>
     </Tab>
   </tabs>

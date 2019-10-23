@@ -1,7 +1,9 @@
 package model;
 
 public class SaleVO {
-
+	
+	private int no;
+	private String client;
 	private String date;
 	private String goods;
 	private int price;
@@ -12,6 +14,38 @@ public class SaleVO {
 	public SaleVO() {
 
 	}
+	
+	public SaleVO(int no, String client, String date, String goods, int price, int count, int total, String coments) {
+		super();
+		this.no = no;
+		this.client = client;
+		this.date = date;
+		this.goods = goods;
+		this.price = price;
+		this.count = count;
+		this.total = total;
+		this.coments = coments;
+	}
+
+
+
+	public SaleVO(int no, String client, String date, String goods, int price, int count, String coments) {
+		super();
+		this.no = no;
+		this.client = client;
+		this.date = date;
+		this.goods = goods;
+		this.price = price;
+		this.count = count;
+		this.coments = coments;
+	}
+
+	public SaleVO(String goods, int count, int total) {
+		super();
+		this.goods = goods;
+		this.count = count;
+		this.total = total;
+	}
 
 	public SaleVO(String date, String goods, int price, int count, int total, String coments) {
 		super();
@@ -21,6 +55,33 @@ public class SaleVO {
 		this.count = count;
 		this.total = total;
 		this.coments = coments;
+	}
+
+	public SaleVO(int no, String date, String goods, int price, int count, int total, String coments) {
+		super();
+		this.no = no;
+		this.date = date;
+		this.goods = goods;
+		this.price = price;
+		this.count = count;
+		this.total = total;
+		this.coments = coments;
+	}
+	
+	public String getClient() {
+		return client;
+	}
+
+	public void setClient(String client) {
+		this.client = client;
+	}
+
+	public int getNo() {
+		return no;
+	}
+
+	public void setNo(int no) {
+		this.no = no;
 	}
 
 	public String getDate() {
