@@ -4,6 +4,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 public class AlertManager {
+	/*********************
+	 * 
+	 * 기능 : 에러 항목들을 모아서 정의 해놓음
+	 * 
+	 * @author xim
+	 *
+	 */
 	public enum AlertInfo {
 		ERROR_LOAD_MEMBER(AlertType.ERROR, "에러", "회원정보 불러오기에 실패했습니다."),
 		ERROR_LOAD_SCENE(AlertType.ERROR, "에러", "화면 로딩에 실패했습니다."),
@@ -19,6 +26,7 @@ public class AlertManager {
 		FAIL_SIGNUP_DUPLICATE_ID(AlertType.WARNING, "가입 실패", "이미 사용중인 아이디 입니다."),
 		FAIL_SALE_ADD_UNCHECK(AlertType.WARNING, "등록 실패", "확인 버튼을 누른 후 시도해주세요."),
 		FAIL_LOAD_BARCHART_DATA(AlertType.WARNING, "경고", "데이터가 없습니다."),
+		FAIL_LOAD_IMAGE(AlertType.WARNING, "이미지 불러오기 실패", "잘못된 이미지 주소입니다."),
 
 		SUCCESS_TASK(AlertType.INFORMATION, "작업 완료", "요청작업을 완료했습니다."),
 		SUCCESS_SIGNUP(AlertType.INFORMATION, "가입 완료", "회원 가입을 완료했습니다."),
@@ -36,7 +44,8 @@ public class AlertManager {
 			this.message = message;
 		}
 	}
-
+	
+	//싱글톤
 	static private AlertManager shared = new AlertManager();
 
 	private AlertManager() {

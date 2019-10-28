@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 
 public class SceneLoader {
+	//싱글톤
 	static private SceneLoader shared = new SceneLoader();
 
 	private SceneLoader() {

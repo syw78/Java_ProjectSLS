@@ -12,7 +12,7 @@ import javafx.collections.ObservableList;
 import util.DBUtil;
 
 public class GoodsDAO {
-
+	
 	public void insertGoodsDB(String client, String goodsName, int price) throws SQLException {
 		String dml = "insert into goodsTBL (client, goodsName, price) values (?,?,?)";
 
@@ -23,7 +23,7 @@ public class GoodsDAO {
 			statement.setInt(3, price);
 			statement.execute();
 		}
-	}
+	} // end of insertGoodsDB
 	
 	public ArrayList<GoodsVO> getGoodsTotal() throws SQLException {
 
@@ -46,7 +46,7 @@ public class GoodsDAO {
 		}
 		
 		return goodsList;
-	}
+	} // end of getGoodsTotal
 	
 	public boolean deleteGoods(int no) throws SQLException {
 
@@ -57,7 +57,7 @@ public class GoodsDAO {
 			statement.setInt(1, no);
 			return statement.executeUpdate() > 0;
 		}
-	}
+	} // end of deleteGoods
 	
 	public boolean updateGoods(String goodsName, int price, int no) throws SQLException {
 
@@ -71,7 +71,7 @@ public class GoodsDAO {
 			
 			return statement.executeUpdate() > 0;
 		}
-	}
+	} // end of updateGoods
 
 	public boolean updateOnlyPrice(int no, int price) throws SQLException {
 
@@ -84,7 +84,7 @@ public class GoodsDAO {
 			
 			return statement.executeUpdate() > 0;
 		}
-	}
+	} // end of updateOnlyPrice
 
 	public ObservableList<GoodsVO> getCheckGoods(String goodsName, String client) throws SQLException {
 
@@ -107,7 +107,8 @@ public class GoodsDAO {
 			}
 		}
 		return goodsList;
-	}
+	} // end of getCheckGoods
+	
 	public GoodsVO getGoodsInfomation(String goodsName, String client) throws SQLException {
 		
 		String dml = "select * from goodsTBL where goodsName = ? and client = ?";
@@ -129,5 +130,6 @@ public class GoodsDAO {
 			
 		}
 		return returnGoodsVO;
-	}
-}
+	} // end of getGoodsInfomation
+	
+} // end of GoodsDAO

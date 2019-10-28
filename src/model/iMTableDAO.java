@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.iMTableVO;
+import util.AlertManager;
 import util.DBUtil;
+import util.AlertManager.AlertInfo;
 
 public class iMTableDAO {
 
@@ -36,7 +38,7 @@ public class iMTableDAO {
 
 		} catch (SQLException e) {
 
-			e.printStackTrace();
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 
 		} finally {
 
@@ -46,6 +48,7 @@ public class iMTableDAO {
 				if (con != null)
 					con.close();
 			} catch (SQLException e) {
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 
 			}
 		}
@@ -76,9 +79,9 @@ public class iMTableDAO {
 			}
 
 		} catch (SQLException se) {
-			System.out.println(se);
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} catch (Exception e1) {
-			System.out.println(e1);
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 			try {
 
@@ -92,7 +95,7 @@ public class iMTableDAO {
 					con.close();
 				}
 			} catch (SQLException se) {
-
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
 		return list;
@@ -125,9 +128,9 @@ public class iMTableDAO {
 			}
 
 		} catch (SQLException se) {
-			System.out.println(se);
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} catch (Exception e1) {
-			System.out.println(e1);
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 
 			try {
@@ -144,7 +147,7 @@ public class iMTableDAO {
 					con.close();
 				}
 			} catch (SQLException se) {
-
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
 		return list;
@@ -176,9 +179,9 @@ public class iMTableDAO {
 			}
 
 		} catch (SQLException se) {
-			System.out.println(se);
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} catch (Exception e1) {
-			System.out.println(e1);
+			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 		} finally {
 			try {
 
@@ -192,7 +195,7 @@ public class iMTableDAO {
 					con.close();
 				}
 			} catch (SQLException se) {
-
+				AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DB, null);
 			}
 		}
 		return list;

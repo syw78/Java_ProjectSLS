@@ -53,7 +53,7 @@ public class SaleDAO {
 			}
 		}
 		return saleList;
-	}
+	} // end of getSaleTotal
 
 	public boolean deleteSale(SaleVO saleVO) throws SQLException {
 
@@ -65,7 +65,7 @@ public class SaleDAO {
 			System.out.println(saleVO.getNo());
 			return statement.executeUpdate() > 0;
 		}
-	}
+	} // end of deleteSale (SaleVO)
 	
 	public boolean deleteSale(String date) throws SQLException {
 
@@ -76,7 +76,7 @@ public class SaleDAO {
 			statement.setString(1, date);
 			return statement.executeUpdate() > 0;
 		}
-	}
+	} // end of deleteSale (date)
 	
 	public ArrayList<SaleVO> getListToDate(String date) throws SQLException {
 
@@ -105,7 +105,7 @@ public class SaleDAO {
 			}
 		}
 		return saleList;
-	}
+	} // end of getListToDate
 	
 	public ObservableList<SaleVO> barChartData(String date) throws SQLException{
 		
@@ -130,5 +130,5 @@ public class SaleDAO {
 			
 		}
 		return resultList;
-	}
+	} // end of barChartData
 }

@@ -19,7 +19,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Alert;
@@ -38,8 +37,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import model.ClientDAO;
-import model.ClientVO;
 import model.GoodsDAO;
 import model.GoodsVO;
 import model.SaleDAO;
@@ -53,7 +50,11 @@ import util.SceneLoader;
 public class MainController implements Initializable {
 
 	/*****************
-	 * 태성
+	 * 
+	 * 재고 관리에 필요한 창의 변수
+	 * 
+	 * 이태성
+	 * 
 	 */
 	@FXML
 	private Button buttonIM; // 1. 재고 관리버튼
@@ -85,7 +86,7 @@ public class MainController implements Initializable {
 	private iMTableVO selectTableView = null;
 
 	/********************
-	 * 기능 : 필요한 saleVO 모델의 변수 2019 10 월 18 일
+	 * 기능 : 필요한 판매 관리 창의 변수
 	 * 
 	 * 작성자 : 심재현
 	 * 
@@ -138,6 +139,7 @@ public class MainController implements Initializable {
 	private boolean flagDeleteCheck = false;
 
 	/*******************************
+	 * 
 	 * 기능 : 필요한 goodsVO의 변수들 2019 10 월 18 일
 	 * 
 	 * 작성자 : 심재현
@@ -150,6 +152,7 @@ public class MainController implements Initializable {
 	private GoodsVO selectMenuEditGoodsVO = null;
 
 	/**********************************
+	 * 
 	 * 기능 : 필요한 그 외의 변수들 2019 10 월 18 일
 	 * 
 	 * 작성자 : 심재현
@@ -160,16 +163,16 @@ public class MainController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		//버튼 세팅
 		buttonInitSetting(false, true, true, true, false, true);
-
+		//테이블 세팅
 		tableViewSetting();
-
+		//물품 데이터 세팅
 		loadTotalGoodsDB();
+		//콤보 박스 세팅
+		comboBoxSettion();
 
 		datePicker.setOnAction(e -> handlerDatePicker(e));
-
-		comboBoxSettion();
 
 		comboBox.setOnAction(e -> {
 
@@ -177,8 +180,15 @@ public class MainController implements Initializable {
 
 		}); // end of cbGoodsList
 
+		/******************************
+		 * 
+		 * 기능 : 엔터를 누르면 항목에 추가한다.
+		 * 
+		 * 심재현 
+		 * 
+		 */
 		tfCount.setOnKeyPressed(new EventHandler<KeyEvent>() {
-
+			
 			@Override
 			public void handle(KeyEvent keyEvent) {
 				KeyCode keyCode = keyEvent.getCode();
@@ -213,7 +223,7 @@ public class MainController implements Initializable {
 
 			}
 		});
-
+		
 		btSelectRowDelete.setOnAction(e -> handlerButtonRowDeleteAction(e));
 
 		btCheck.setOnAction(e -> handlerButtonCheckAction(e));
@@ -226,7 +236,7 @@ public class MainController implements Initializable {
 
 		btSaleTotalPrice.setOnAction(e -> handlerButtonSaleTotalPrice(e));
 
-		btRemoveTable.setOnAction(e -> handlerButtonRemobeTableAction(e));
+		btRemoveTable.setOnAction(e -> handlerButtonRemoveTableAction(e));
 
 		tableView.setOnMousePressed(e1 -> {
 
@@ -272,7 +282,14 @@ public class MainController implements Initializable {
 		btDelete.setOnAction(e -> handlerButtonDeleteAction(e));
 
 	} // end of initialize
-
+	
+	/******************************
+	 * 
+	 * 기능 : 데이터 베이스에 추가 되지 않은 항목들만 삭제한다.
+	 * 
+	 * 심재현
+	 * 
+	 */
 	private void handlerButtonRowDeleteAction(ActionEvent e) {
 		
 		if(addSaleVOList.contains(tableSelectSaleVO)) {
@@ -291,29 +308,35 @@ public class MainController implements Initializable {
 			
 		}
 
-	}
-
+	} // end of handlerButtonRowDeleteAction
+	
+	/*********************
+	 * 
+	 * 기능 : 버튼을 누르면 테이블 뷰의 내용들을 확인한다.
+	 * 
+	 * 심재현
+	 * 
+	 */
 	private void handlerButtonCheckAction(ActionEvent e) {
 
 		if (loadSaleVOList.isEmpty()) {
 			AlertManager.getInstance().show(AlertInfo.ERROR_TASK_EMPTY, null);
 			return;
 		}
-//		for (int i = 0; i < loadSaleVOList.size(); i++) {
-//			for (int j = 0; j < i; j++) {
-//				if (loadSaleVOList.get(i).getGoods().equals(loadSaleVOList.get(j).getGoods())) {
-//					flagCheck = false;
-//					AlertManager.getInstance().show(AlertInfo.ERROR_TASK_DUPLICATE, null);
-//					return;
-//				}
-//			}
-//		}
 
 		flagCheck = true;
 		AlertManager.getInstance().show(AlertInfo.SUCCESS_CHECK, null);
 		buttonInitSetting(true, false, true, false, false, false);
-	}
-
+		
+	} // end of handlerButtonCheckAction
+	
+	/**********************
+	 * 
+	 * 기능 : 데이터 베이스에 있는 물품들을 불러와서 콤보박스에 넣는다.
+	 * 
+	 * 심재현
+	 * 
+	 */
 	private void comboBoxSettion() {
 
 		try {
@@ -337,7 +360,7 @@ public class MainController implements Initializable {
 			sqle.printStackTrace();
 		}
 
-	}
+	} // end of comboBoxSettion
 
 	/*************************
 	 * 
@@ -380,6 +403,13 @@ public class MainController implements Initializable {
 
 	} // end of handlerDatePicker
 
+	/***********************
+	 * 
+	 * 기능 : 확인 버튼이 눌린 후 데이터 베이스에 저장되지 않은 항목들을 저장한다.
+	 * 
+	 * 심재현
+	 * 
+	 */
 	private void handlerButtonSaleAddAction(ActionEvent e) {
 
 		if (!flagCheck) {
@@ -409,7 +439,8 @@ public class MainController implements Initializable {
 	} // end of handlerButtonSaleAddAction
 
 	/************************************
-	 * 기능 : 버튼을 누르면 항목을 지운다. 2019 10 월 18 일
+	 * 
+	 * 기능 : 버튼을 누르면 항목을 지운다. 
 	 * 
 	 * 작성자 : 심재현
 	 * 
@@ -459,7 +490,8 @@ public class MainController implements Initializable {
 	} // end of handlerButtonSaleDelete
 
 	/***************************
-	 * 기능 : 버튼을 누르면 메뉴 확인 다이얼로그 창을 띄운다. 2019 10 월 18 일
+	 * 
+	 * 기능 : 버튼을 누르면 메뉴 확인 다이얼로그 창을 띄운다.
 	 * 
 	 * 작성자 : 심재현
 	 * 
@@ -501,6 +533,7 @@ public class MainController implements Initializable {
 			tableView.getColumns().addAll(columnGoods, columnPrice);
 
 			/*******************
+			 * 
 			 * 2019 10 월 18 일 작성자 : 심재현
 			 * 
 			 * 기능 : 검색버튼
@@ -524,6 +557,7 @@ public class MainController implements Initializable {
 			}); // end of btSearch
 
 			/**********************
+			 * 
 			 * 2019 10 월 18 일 작성자 : 심재현
 			 * 
 			 * 기능 : 테이블뷰 새로 고침 버튼
@@ -539,6 +573,7 @@ public class MainController implements Initializable {
 			});
 
 			/******************************
+			 * 
 			 * 2019 10 월 18 일 작성자 : 심재현
 			 * 
 			 * 기능 : 메뉴를 등록한다.
@@ -593,6 +628,7 @@ public class MainController implements Initializable {
 			}); // end of btAdd
 
 			/**************************
+			 * 
 			 * 2019 10 월 18 일 작성자 : 심재현
 			 * 
 			 * 기능 : 테이블뷰 선택 시 정보를 저장한다.
@@ -606,6 +642,7 @@ public class MainController implements Initializable {
 			}); // end of tableView select
 
 			/************************************
+			 * 
 			 * 2019 10 월 18일 작성자 : 심재현
 			 * 
 			 * 기능 : 테이블 뷰에서 선택된 항목을 수정하는 창을 보여준다.
@@ -632,6 +669,7 @@ public class MainController implements Initializable {
 					tfEditPrice.setPromptText(String.valueOf(selectMenuEditGoodsVOList.get(0).getPrice()));
 
 					/********************************
+					 * 
 					 * 2019 10 월 18 일 작성자 : 심재현
 					 * 
 					 * 기능 : 수정한 내용을 업데이트 한다.
@@ -671,6 +709,7 @@ public class MainController implements Initializable {
 					}); // end of btEditOk
 
 					/********************************************
+					 * 
 					 * 2019 10 월 18 일 작성자 : 심재현
 					 * 
 					 * 기능 : 수정 창을 닫는다.
@@ -697,6 +736,7 @@ public class MainController implements Initializable {
 			}); // end of btEdit
 
 			/***********************
+			 * 
 			 * 2019 10 월 18 일 작성자 : 심재현
 			 * 
 			 * 기능 : 테이블 뷰에서 선택 된 항목을 테이블 뷰에서 삭제한다.
@@ -726,7 +766,9 @@ public class MainController implements Initializable {
 					}
 				});
 			}); // end of btEditDelete
+			
 			/*****************
+			 * 
 			 * 2019 10 월 18 일 작성자 : 심재현
 			 * 
 			 * 기능 : 메뉴 확인 창을 닫는다.
@@ -748,6 +790,7 @@ public class MainController implements Initializable {
 	} // end of handlerButtonMenuCheck
 
 	/****************************
+	 * 
 	 * 기능 : 테이블 뷰의 표시된 금액을 전부 합해서 보여준다. 2019 10 월 19
 	 * 
 	 * 작성자 : 심재현
@@ -764,8 +807,15 @@ public class MainController implements Initializable {
 		tfTotalSalePrice.setText(String.valueOf(saleTotalPrice));
 
 	} // end of handlerButtonSaleTotalPrice
-
-	private void handlerButtonRemobeTableAction(ActionEvent e) {
+	
+	/******************************
+	 * 
+	 * 기능 : 화면을 새로 고침 한다.
+	 * 
+	 * 심재현 
+	 * 
+	 */
+	private void handlerButtonRemoveTableAction(ActionEvent e) {
 
 		ObservableList<SaleVO> removeList = FXCollections.observableArrayList();
 		ObservableList<String> removeComboList = FXCollections.observableArrayList();
@@ -782,12 +832,19 @@ public class MainController implements Initializable {
 		comboBox.setItems(removeComboList);
 		datePicker.setValue(null);
 		comboBoxSettion();
-		barChartSetting(removeList);
+		barChart.getData().clear();
 
 		buttonInitSetting(false, true, true, true, false, true);
 
-	}
-
+	} // end of handlerButtonRemoveTableAction
+	
+	/********************
+	 * 
+	 * 기능 : 버튼들의 disable 값을 결정한다.
+	 * 
+	 * 심재현
+	 * 
+	 */
 	private void buttonInitSetting(boolean btCheck, boolean btSaleAdd, boolean btSaleDelete, boolean btSelectRowDelete,
 			boolean btMenuCheck, boolean btSaleTotalPrice) {
 
@@ -798,8 +855,15 @@ public class MainController implements Initializable {
 		this.btMenuCheck.setDisable(btMenuCheck);
 		this.btSaleTotalPrice.setDisable(btSaleTotalPrice);
 
-	}
-
+	} // end of buttonInitSetting
+	
+	/**************************
+	 * 
+	 * 기능 : 물품의 항목들을 데이터 베이스에서 불러온다.
+	 * 
+	 * 심재현
+	 * 
+	 */
 	private void loadTotalGoodsDB() {
 		try {
 			GoodsDAO goodsDVO = new GoodsDAO();
@@ -819,10 +883,12 @@ public class MainController implements Initializable {
 	} // end of loadTotalGoodsDB
 
 	/************************
+	 * 
 	 * 기능 : 메인창의 테이블 뷰를 세팅한다. 2019 10 월 18 일 작성자 : 심재현
 	 * 
+	 * 심재현 
+	 * 
 	 */
-
 	private void tableViewSetting() {
 
 		tableView.setEditable(false);
@@ -912,7 +978,11 @@ public class MainController implements Initializable {
 	} // end of barChartSetting
 
 	/**************************************
+	 * 
+	 * 기능 : 재고 관리 창의 차트를 세팅한다.
+	 * 
 	 * 태성
+	 * 
 	 */
 	private void iMbarChartSetting() {
 
@@ -947,6 +1017,13 @@ public class MainController implements Initializable {
 		}
 	}
 
+	/**************************
+	 * 
+	 * 기능 : 재고 관리 창의 선택된 테이블 값을 삭제한다.
+	 * 
+	 * 이태성
+	 * 
+	 */
 	private void handlerButtonDeleteAction(ActionEvent e) {
 
 		try {
@@ -973,7 +1050,14 @@ public class MainController implements Initializable {
 
 		return;
 	}
-
+	
+	/**********************************
+	 * 
+	 * 기능 : 달력을 선택하면 해당 날짜의 데이터를 불러와서 테이블 뷰에 보여준다.
+	 * 
+	 * 이태성
+	 * 
+	 */
 	private void handlerDatePickerAction(ActionEvent e) {
 
 		try {
